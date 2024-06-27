@@ -32,7 +32,18 @@ So as it appears, mixing Modern Standby and Hibernation gets possible without fr
 > This situation can be seem in a Console admin, with command: `powercfg /requests`
 > 
 > Something showing there in one of the sections means Windows will not yet allow sleep
->
-> 
+## Note about Legacy Power Plan to use this script
+The tweaks concern here the default Windows 11 legacy Power Plan (Balanced), which is - normally - the only one left in legacy Power Plans.
+
+Not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, that can be setup in Windows 11 settings
+
+You can see the Legacy Power Plan in use: command line `powercfg /L` 
+
+The GUID used in this script uses Balanced Power Plan, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e. 
+
+If this is not the GUID shown on your side, then you need to adjust GUID in the script before running it. Locate the above GUID, and replace it with yours
+## Software configuration used
+
+| 
 
 
