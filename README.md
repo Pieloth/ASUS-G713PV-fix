@@ -117,5 +117,6 @@ Script behavior differs whether if it is run with or without admin level
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues on next power up and sleep. To be analyzed further, but Microsoft already states (on the Fast Startup option comment) that Fast Startup may cause USB issues...
 2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce
+3.  Using G-Helper "Optimized" mode, when changing from "Standard" to "Eco", a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear at the end of timeout with no other impact
 ## Todo
 1. Add a rollback procedure, in case needed, with default Windows 11 registry values
