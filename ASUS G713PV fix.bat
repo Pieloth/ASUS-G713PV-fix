@@ -1,11 +1,16 @@
 @echo off
 :: ASUS ROG tweaks 
 
-set quiet=
-if "%1"=="/q" set quiet=1
-if "%1"=="/Q" set quiet=1
-
 set "pausecls=(pause & cls)"
+set quiet=
+set "p1=%1"
+if /I "%p1:~0,2%"=="/q" set quiet=1
+
+:: Retreive legacy active power mode GUID in 1st line of powercfg /q
+for /f "delims=" %%i in ('powercfg /q') do set actpowplan=%%i & goto :stop
+:stop
+for /f "tokens=2 delims=:" %%i in ("%actpowplan%") do set actpowplan1=%%i
+for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
 
 chcp 65001 > NUL
 
@@ -63,8 +68,8 @@ call :ProcessKey add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Device
 
 :: Set 2 important Power Management registry keys
 set "Step=3.1 et 3.2/ Power Management : IO coalescing timeout set to 60s and policy for devices powering down while the system is running set to power saving
-call :ProcessKey add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\381b4222-f694-41f0-9685-ff5bb260df2e" "ACSettingIndex" "reg_dword" 0x0000ea60
-call :ProcessKey add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\381b4222-f694-41f0-9685-ff5bb260df2e" "ACSettingIndex" "reg_dword" 1
+call :ProcessKey add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "reg_dword" 0x0000ea60
+call :ProcessKey add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "reg_dword" 1
 
 :: Reconfigure nVidia HDA audio driver for Idle Times
 set "Step=4.1 et 4.2/ Modify Idle Time AC et DC for HDA nVidia driver"
@@ -78,7 +83,12 @@ call :ProcessKey add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Graphi
 echo:
 echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!
 echo:
-if not defined quiet %pausecls%
+if defined quiet goto :eof
+set /p continue="Do you want to reboot computer in 30 sec (y/n): "
+if /I "%continue%" == "y" (
+	echo shutdown in 30 seconds.
+	shutdown /r
+)
 goto :eof
 
 :ProcessKey   - Processes the current key
@@ -87,6 +97,11 @@ echo [93m%step%[0m
 echo -------------------
 echo [34mRegistry key BEFORE change:[0m
 reg query %2 /v %3 /t %4
+if errorlevel 1 (
+	echo [91mDID NOT FIND KEY %2 value %3 type %4
+	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS KEY[0m
+	goto :EndProcessKey
+)
 echo:
 echo [36mRegistry key CHANGE STATUS:[0m
 if "%1" == "add" reg %1 %2 /v %3 /t %4 /d %5 /f
@@ -94,6 +109,7 @@ if "%1" == "delete" reg %1 %2 /v %3 /f
 echo:
 echo [35mRegistry key AFTER change:[0m
 reg query %2 /v %3 /t %4
+:EndProcessKey
 echo:
 if not defined quiet %pausecls%
 exit /b
