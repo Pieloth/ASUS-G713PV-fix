@@ -59,6 +59,7 @@ But can be another one, if you forced other Legacy Power Schemes
 
 ## Software configuration used
 Here is the software configuration used for the set up and tests:
+
 | device | driver or software version |
 |-------| -------|
 |AMD Graphics | AMD Adrenalin 24.5.1 and 24.6.1|
@@ -70,17 +71,46 @@ Here is the software configuration used for the set up and tests:
 |Armoury Crate| Not tested |
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of the actions and tweaks performed by the script
+> [!CAUTION]
+> Settings performed for nVidia HDA driver need to be done again each time the nVidia driver is reinstalled
+
 |Action|Registry key or command|Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
-|Enable Fast Startup|HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power  HiberbootEnabled (dword)|0 or 1|1|
-|Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364   Attributes (dword)| 1|2|
+|Enable Fast Startup|HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power > HiberbootEnabled (dword)|0 or 1|1|
+|Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
 |Activate Hibernation/Fast Startup|Admin command line: powercfg /h on| On or Off| On|
-|Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity   Enabled (dword)|1| 0|
-|IO coalescing timeout |HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\<Power Scheme GUID>   ACSettingIndex (dword)|0|60000|
-|Policy for devices powering down while the system is running||||
-|||||
-|||||
-|||||
+|Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
+|IO coalescing timeout |HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword)|0|60000|
+|Policy for devices powering down while the system is running|HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
+|Idle Time AC for HDA nVidia driver|HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
+|Idle Time DC for HDA nVidia driver|HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
+|Graphics drivers Tdr Delay|HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers > TdrDelay (dword)|2|60|
 
+> [!IMPORTANT]
+> REBOOT laptop to take into account changes after script is applied
 
+> [!IMPORTANT]
+> All tweaks are needed alltogether as a whole to have effect.
+>
+> Some of the issues get solved only with several of these tweaks
 
+No particular impact on performances noted on my side
+
+## How to run script
+Script behavior differs whether if it is run with or without admin level
+1. without admin level: the script won't modify anything, it will only show the action and registry keys without effectively changing anything.
+
+   This is particularly useful to perform a dry run, and see how it behaves.
+
+   In case of wrong registry key or error, it will display it.
+
+   Simply hit enter for each action shown
+
+2. with admin level: The script will show actions as in 1. and perform the changes.
+
+   A laptop reboot is proposed at the end.
+
+> [!TIP]
+> Parameter /q or /quiet can be passed on command line. In this case, the "Hit enter to continue" will not be shown, but you can review at the end all actions performed by script in the window.
+>
+> In this case, reboot at the end will no be proposed
