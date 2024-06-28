@@ -69,9 +69,18 @@ Here is the software configuration used for the set up and tests:
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance|
 |Armoury Crate| Not tested |
 | Windows version | Tested with latest French Windows 11 version|
-## Summary of the tweaks performed by the script
-|Action or registry key|Default value|Target value set by script|
-|----------------------|-------------|--------------------------|
-|
+## Summary of the actions and tweaks performed by the script
+|Action|Registry key or command|Default value|Target value set by script|
+|:-----|:---------------------|:-----------:|:------------------------:|
+|Enable Fast Startup|HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power  HiberbootEnabled (dword)|0 or 1|1|
+|Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364   Attributes (dword)| 1|2|
+|Activate Hibernation/Fast Startup|Admin command line: powercfg /h on| On or Off| On|
+|Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity   Enabled (dword)|1| 0|
+|IO coalescing timeout |HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\<Power Scheme GUID>   ACSettingIndex (dword)|0|60000|
+|Policy for devices powering down while the system is running||||
+|||||
+|||||
+|||||
+
 
 
