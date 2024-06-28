@@ -7,15 +7,15 @@ It has been designed and tested on this laptop model, but likely to be used also
 Here is a summary of different issues of G713PV laptop, and their status after using this utility batch script
 Solved means: Did not experience this anymore
 
-|Issues on G713PV | After using utility |
-|-------|-------|
+|Issues on G713PV | After using utility | Comments |
+|-------|-------|---|
 |Screen fast flickers | Solved |
-|Modern Standby with Hibernation/Fast Startup enabled willfreeze laptop on sleep | Solved, with bonus: Laptop now can start faster! |
+|Modern Standby with Hibernation/Fast Startup enabled willfreeze laptop on sleep | Solved |Bonus: Laptop now can start faster!
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|
-|Black login screen after wake up from Modern Standby|Solved|
+|Black login screen after wake up from Modern Standby|Partially solved|Need more understanding of this strange phenomenon |
 |nvlddmkm crash during Modern Standby|Solved|
 |Using nVidia HDA sound driver: sound crash, HDMI sound channel loss|Solved|
-|Random reboots|To be confirmed. Not seen anymore|
+|Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
 ## Hints with Microsoft Modern Standby
 Modern Standby is not and will never be former S3 sleep. 
 
@@ -32,16 +32,19 @@ So as it appears, mixing Modern Standby and Hibernation gets possible without fr
 > This situation can be seem in a Console admin, with command: `powercfg /requests`
 > 
 > Something showing there in one of the sections means Windows will not yet allow sleep
-## Note about Legacy Power Plan to use this script
-The tweaks concern here the default Windows 11 legacy Power Plan (Balanced), which is - normally - the only one left in legacy Power Plans.
+## Prerequisites on Modern STandby and Legacy Power Plan to use this script
+First of all, you'll need to have Modern Standby ENABLED! If you previously disabled it, then better to re-enable it as it should run fine now along with Hibernation 
 
-Not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, that can be setup in Windows 11 settings
+The tweaks will be applied to the current Windows 11 Power Scheme in use.
 
-You can see the Legacy Power Plan in use: command line `powercfg /L` 
+Normally, if you didn't hack and have Modern Standby enabled, then you should have only 1 legacy Power Scheme left: Balanced
 
-The GUID used in this script uses Balanced Power Plan, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e. 
+Not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, that can be setup in Windows 11 settings.
 
-If this is not the GUID shown on your side, then you need to adjust GUID in the script before running it. Locate the above GUID, and replace it with yours
+You can see the current Legacy Power Scheme in use with admin command line: `powercfg /L` 
+
+The script will detect and use the GUID for the active Power Scheme, normally it is balanced with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e. But can be another one if you forced other Power Schemes
+
 ## Software configuration used
 
 | 
