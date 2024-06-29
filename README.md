@@ -111,7 +111,7 @@ Script behavior differs whether if it is run with or without admin level
    A laptop reboot is proposed at the end.
 
 > [!TIP]
-> Parameter /q or /quiet can be passed on command line. In this case, the "Hit enter to continue" will not be shown, but you can review at the end all actions performed by script in the window.
+> Parameter /q or /quiet can be passed on command line. In this case, the "Hit enter to continue" will not be shown, but all actions performed by script you can reviewed in the opened terminal window.
 >
 > In this case, reboot at the end will no be proposed
 ## Known issues - To be digged further
