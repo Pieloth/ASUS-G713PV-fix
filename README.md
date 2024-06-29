@@ -7,7 +7,7 @@ It has been designed and tested on this laptop model, but likely to be used also
 ## Issues covered
 Here is a summary of different G713PV laptop issues, and their status after using this utility batch script.
 
-Solved means here: Did not experience this anymore 😊
+Solved means here: Not experience this anymore 😊
 
 |Issues on G713PV | After using utility | Comments |
 |-------|-------|---|
@@ -39,23 +39,23 @@ So the huge step ahead, is that mixing Modern Standby and Hibernation is now pos
 > Something showing there in one of the sections means Windows will not yet allow laptop to sleep
 >
 > Simply exiting Standby, or session Logoff/logon, solves this issue. 
-## Prerequisites on Modern STandby and Legacy Power Plan to use this script
+## Prerequisites on Modern Standby and Legacy Power Schemes to use this script
 > [!IMPORTANT]
 > First of all, Modern Standby should be ENABLED!
 >
-> If you previously disabled it, then better to re-enable it as it should run fine now along with Hibernation 
+> If previously disabled, then better to re-enable it as it should run fine now along with Hibernation 
 
 The tweaks will be applied to the current Windows 11 Power Scheme in use.
 
-Normally, if you didn't hack and have Modern Standby enabled, then you should have only 1 legacy Power Scheme left: Balanced
+Normally, if Modern Standby is enabled, there should be only 1 legacy Power Scheme left: Balanced
 
 Not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, that can be setup in Windows 11 settings.
 
-You can see the current Legacy Power Scheme in use with admin command line: `powercfg /L` 
+Current Legacy Power Scheme in use can be checked with admin command line: `powercfg /L` 
 
 The script will detect and use the GUID for the active Power Scheme, normally, balanced with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e. 
 
-But can be another one, if you forced other Legacy Power Schemes
+But can be another one, if other Legacy Power Schemes have been forced
 
 ## Software configuration used
 Here is the software configuration used for the set up and tests:
@@ -94,7 +94,7 @@ Here is the software configuration used for the set up and tests:
 >
 > Some of the issues get solved only with several of these tweaks
 
-No particular impact on performances noted on my side
+No particular impact on performances noted 
 
 ## How to run script
 Script behavior differs whether if it is run with or without admin level
@@ -115,8 +115,8 @@ Script behavior differs whether if it is run with or without admin level
 >
 > In this case, reboot at the end will no be proposed
 ## Known issues - To be digged further
-1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues on next power up and sleep. To be analyzed further, but Microsoft already states (on the Fast Startup option comment) that Fast Startup may cause USB issues...
+1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB...
 2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce
-3.  Using G-Helper "Optimized" mode, when changing from "Standard" to "Eco", a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear at the end of timeout with no other impact
+3.  Using G-Helper, when selecting "Optimized" mode, a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear after a minute with no other impact
 ## Todo
 1. Add a rollback procedure, in case needed, with default Windows 11 registry values
