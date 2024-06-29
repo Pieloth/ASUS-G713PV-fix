@@ -100,9 +100,9 @@ No particular impact on performances noted
 Script behavior differs whether if it is run with or without admin level
 1. without admin level: the script won't modify anything, it will only show the action and registry keys without effectively changing anything.
 
-   This is particularly useful to perform a dry run, and see how it behaves.
+   This is particularly useful to perform a dry run, and see how it behaves, or to check current parameters set.
 
-   In case of wrong registry key or error, it will display it.
+   In case of wrong registry key or error, it will be displayed
 
    Simply hit enter for each action shown
 
@@ -111,7 +111,7 @@ Script behavior differs whether if it is run with or without admin level
    A laptop reboot is proposed at the end.
 
 > [!TIP]
-> Parameter /q or /quiet can be passed on command line. In this case, the "Hit enter to continue" will not be shown, but all actions performed by script can reviewed in the opened terminal window.
+> Parameter /q or /Q can be passed on command line. In this case, the "Hit enter to continue" will not be shown, but all actions performed by script can reviewed in the opened terminal window.
 >
 > In this case, reboot at the end will no be proposed
 ## Known issues - To be digged further
@@ -119,4 +119,4 @@ Script behavior differs whether if it is run with or without admin level
 2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce
 3.  Using G-Helper, when selecting "Optimized" mode, a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear after a minute with no other impact
 ## Todo
-1. Add a rollback procedure, in case needed, with default Windows 11 registry values
+1. Add a rollback procedure (ongoing), in case needed, with default Windows 11 registry values
