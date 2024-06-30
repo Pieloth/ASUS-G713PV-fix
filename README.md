@@ -17,7 +17,6 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |nVidia nvlddmkm.dll crash during Modern Standby|Solved| Long Graphics TDR delay needed when in deep sleep mode |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia HD audio Idle timeouts driver tweaks|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure same root cause as freezes, might be linked to Iris Service cache issue |
-|Deep sleep interruptions |Reduced|Apps like Steam client have internet activity while deep sleep, and keep interrupting it|
 |Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
@@ -91,7 +90,6 @@ Software configuration used for set up and tests:
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |IO coalescing timeout (ms) |HKLM\..\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword)|0|30000 |
 |Policy for devices powering down while the system is running|HKLM\..\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
-|Networking connectivity in Standby managed by Windows (reduce sleep interruptions by apps)|HKLM\..\Control\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\381b4222-f694-41f0-9685-ff5bb260df2e\<Power Scheme GUID> > ACSettingIndex (dword) |1|2|
 |Idle Time AC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
 |Idle Time DC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
 |Graphics drivers Tdr Delay (s)|HKLM\..\Control\GraphicsDrivers > TdrDelay (dword)|2|60|
