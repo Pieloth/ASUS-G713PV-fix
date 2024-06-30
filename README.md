@@ -16,8 +16,9 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks|
 |nVidia nvlddmkm.dll crash during Modern Standby|Solved| Long Graphics TDR delay needed when in deep sleep mode |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia HD audio Idle timeouts driver tweaks|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure same root cause as freezes, might be linked to Iris Service cache issue |
 |Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure same root cause as freezes|
+|Interruptions during deep sleep |No real solution|Connected Apps like Steam client, Trucksbook, ... have internet activity while deep sleep, and this wakes laptop regularly |
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
 > Modern Standby is not and will never be former S3 sleep. 
@@ -131,7 +132,7 @@ No particular impact on performances noted
 > In this case, reboot at the end will no be proposed
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
-2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce. Suspicion of Windows Spotlight Iris Service...?
+2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce.
 3.  Using G-Helper, when selecting "Optimized" mode, a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear after a minute with no other impact
 ## Todo
 1. Add a rollback procedure (ongoing), in case needed, with default Windows 11 registry values
