@@ -14,7 +14,7 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |Screen fast flickers | Solved |  |
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon |
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure it is linked to same root cause as freezes |
 |nVidia nvlddmkm.dll crash during Modern Standby|Solved|
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss|Solved|
 |Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
@@ -115,7 +115,7 @@ Script behavior differs whether if it is run with or without admin level
 >
 > In this case, reboot at the end will no be proposed
 ## Known issues - To be digged further
-1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB...
+1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
 2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce
 3.  Using G-Helper, when selecting "Optimized" mode, a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear after a minute with no other impact
 ## Todo
