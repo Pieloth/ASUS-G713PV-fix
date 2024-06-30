@@ -85,7 +85,7 @@ Software configuration used for set up and tests:
 |Idle Time AC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
 |Idle Time DC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
 |Graphics drivers Tdr Delay|HKLM\..\Control\GraphicsDrivers > TdrDelay (dword)|2|60|
-|Iris Service for Windows Spotlight|HKCU\Software\Microsoft\Windows\CurrentVersion\IrisService | | Delete key (and cache) to force recreate it|
+|Iris Service for Windows Spotlight|HKCU\Software\Microsoft\Windows\CurrentVersion\IrisService | | Delete key (and cache) to force recreate on next reboot|
 
 > [!IMPORTANT]
 > REBOOT laptop to take into account changes after script is applied
