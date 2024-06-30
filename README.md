@@ -11,12 +11,13 @@ Summary of different G713PV laptop issues, and status after using this utility b
 
 |Issues on G713PV | After using utility | Comments |
 |-------|-------|---|
-|Screen fast flickers | Solved |  |
+|Screen fast flickers | Solved |Core Isolation OFF still needed |
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
-|Laptop crash/freeze on Wake up from Modern Standby|Solved|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure it is linked to same root cause as freezes |
-|nVidia nvlddmkm.dll crash during Modern Standby|Solved|
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss|Solved|
+|Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks|
+|nVidia nvlddmkm.dll crash during Modern Standby|Solved| Long Graphics TDR delay needed when in deep sleep mode |
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia HD audio Idle timeouts driver tweaks|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure same root cause as freezes, might be linked to Iris Service cache issue |
+|Deep sleep interruptions |Reduced|Apps like Steam client have internet activity while deep sleep, and keep interrupting it|
 |Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
@@ -30,7 +31,12 @@ Windows 11 runs an Orchestrator at standby start, performing maintenance tasks, 
 
 Delay between 1 to more than 30 minutes after standby start!
 
-Huge step ahead: mixing Modern Standby and Hibernation now possible without freeze. Hibernation recommended to start at least 1 hour after Modern Standby start. Did set it to 3 hours like former legacy default Windows settings. Modern Standby Orchestartor can do its duty and saves SSD lifetime too
+Huge step ahead: mixing Modern Standby and Hibernation now possible without freeze. 
+
+Hibernation recommended to start at least 1 hour after Modern Standby start, so that Modern Standby Orchestartor can do its duty and saves SSD lifetime too
+
+Did set it to 3 hours like former legacy default Windows settings. 
+
 > [!NOTE]
 > Sometimes, rarely, Windows Orchestrator hang, and will not let laptop sleep at all 
 >
@@ -89,7 +95,7 @@ Software configuration used for set up and tests:
 |Iris Service for Windows Spotlight|HKCU\Software\Microsoft\Windows\CurrentVersion\IrisService | | Delete key (and cache) to force recreate on next reboot|
 
 > [!IMPORTANT]
-> REBOOT laptop to take into account changes after script is applied
+> **REBOOT laptop to take into account changes after script is applied**
 
 > [!IMPORTANT]
 > All tweaks are needed alltogether as a whole to have effect.
@@ -99,8 +105,12 @@ Software configuration used for set up and tests:
 No particular impact on performances noted 
 
 ## How to run script
-Script behavior differs whether if it is run with or without admin level
-1. **without admin level:** the script won't modify anything, it will only show the action and registry keys without effectively changing anything.
+> [!NOTE]
+> Script behavior differs whether if it is run with or without admin level
+
+1. **without admin level:**
+
+   the script won't modify anything, it will only show the action and registry keys without effectively changing anything.
 
    This is particularly useful to perform a dry run, and see how it behaves, or to check current parameters set.
 
@@ -108,7 +118,9 @@ Script behavior differs whether if it is run with or without admin level
 
    Simply hit enter for each action shown
 
-2. **with admin level:** The script will show actions as in 1. and perform the changes.
+2. **with admin level:**
+
+   The script will show actions as in 1. and perform the changes.
 
    A laptop reboot is proposed at the end.
 
