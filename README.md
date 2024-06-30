@@ -89,12 +89,12 @@ Software configuration used for set up and tests:
 |Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\..\Control\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
-|IO coalescing timeout |HKLM\..\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword)|0|30000 |
+|IO coalescing timeout (ms) |HKLM\..\Control\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword)|0|30000 |
 |Policy for devices powering down while the system is running|HKLM\..\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
 |Networking connectivity in Standby managed by Windows (reduce sleep interruptions by apps)|HKLM\..\Control\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\381b4222-f694-41f0-9685-ff5bb260df2e\<Power Scheme GUID> > ACSettingIndex (dword) |1|2|
-|Idle Time AC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
-|Idle Time DC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
-|Graphics drivers Tdr Delay|HKLM\..\Control\GraphicsDrivers > TdrDelay (dword)|2|60|
+|Idle Time AC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
+|Idle Time DC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
+|Graphics drivers Tdr Delay (s)|HKLM\..\Control\GraphicsDrivers > TdrDelay (dword)|2|60|
 |Iris Service for Windows Spotlight|HKCU\Software\Microsoft\Windows\CurrentVersion\IrisService | | Delete key (and cache) to force recreate on next reboot|
 
 > [!IMPORTANT]
