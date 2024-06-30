@@ -63,6 +63,9 @@ Script detects and use the GUID for the active Power Scheme, normally balanced, 
 
 But can be another one if other Legacy Power Schemes have been forced
 
+> [!TIP]
+> To retreive GUID, script uses the semicolon ":" character. Should be Ok for any Windows language version, but to be confirmed 
+
 ## Software configuration used
 Software configuration used for set up and tests:
 
@@ -78,7 +81,7 @@ Software configuration used for set up and tests:
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
-> Settings performed for nVidia HDA driver need to be done again each time the nVidia driver is reinstalled
+> Settings performed for nVidia HDA driver need to be done again each time the nVidia driver is reinstalled! Just rerun the script.
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
