@@ -79,8 +79,8 @@ call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCod
 set "Step=3.1 et 3.2/ Power Management : IO coalescing timeout set to 30s and policy for devices powering down while the system is running set to power saving
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 0x7530
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 1
-set "Step=3.3 Power Management : Networking connectivity in Standby managed by Windows
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 2
+::set "Step=3.3 Power Management : Networking connectivity in Standby managed by Windows
+::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 2
 
 :: 4 - Reconfigure nVidia HDA audio driver for Idle Times
 set "Step=4.1 et 4.2/ Modify Idle Time AC and DC for HDA nVidia driver"
