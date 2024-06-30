@@ -24,7 +24,7 @@ echo:
 echo                    [91m]]] Install parameters for ASUS G713PV [[[[0m
 echo:
 echo This installer sets up some parameters and registries to best stabilize this laptop
-echo 
+echo: 
 echo Use also G Helper instead of Armoury Crate for even better stability
 echo:
 
@@ -76,7 +76,7 @@ set "Step=2/ Disable Core Isolation. After reboot, clic on 'Ignore' on yellow ic
 call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" 0
 
 :: 3 - Set 3 important Power Management registry keys
-set "Step=3.1 et 3.2/ Power Management : IO coalescing timeout set to 60s and policy for devices powering down while the system is running set to power saving
+set "Step=3.1 et 3.2/ Power Management : IO coalescing timeout set to 30s and policy for devices powering down while the system is running set to power saving
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 0x7530
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 1
 set "Step=3.3 Power Management : Networking connectivity in Standby managed by Windows
@@ -92,7 +92,7 @@ set "Step=5/ Modify Graphics drivers Tdr Delay"
 call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" 0x3C 
 
 :: 7 - Delete the Iris Service settings to force recreate it at next reboot
-set "Step=6/ Delete Iris Service key including Cache to force recreate it (Black logon screen?)"
+set "Step=6/ Delete Iris Service key including Cache to force recreate it on reboot (Black logon screen?)"
 call :ProcessKey delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\IrisService" 
 
 if defined quiet goto :eof
@@ -135,6 +135,7 @@ if defined admin (
 	) else ( reg query %2 /f "*" /k )
 ) else (
 	echo [35mRegistry key TARGET change:[0m
+	echo %1:
 	echo %2  
 	echo       %3    %4    %5[0m
 )
