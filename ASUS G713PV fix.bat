@@ -30,8 +30,15 @@ echo:
 
 set "pausecls=(pause & cls)"
 set quiet=
-set "p1=%1"
-if /I "%p1:~0,2%"=="/q" set quiet=1
+set rollback=
+
+:ReadParams
+if "%~1" == "" goto :EndReadParams
+if /I "%~1" == "/q" set quiet=1
+if /I "%~1" == "/r" set rollback=1
+shift
+goto :ReadParams
+:EndReadParams
 
 :: Retreive legacy active power scheme GUID from 1st line of powercfg /q
 for /f "delims=" %%i in ('powercfg /q') do set actpowplan=%%i & goto :stop
@@ -53,10 +60,10 @@ if not defined quiet %pausecls%
 :: 1 - Hibernation enable and setup
 :: set Fast Startup ON
 set "Step=1.1/ (Re)-Activate Fast Startup"
-call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "reg_dword" 1 
+call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "REG_DWORD" 1 
 :: show hibernate after options
 set "Step=1.2/ Add option 'Hibernation timeout' into legacy Power Settings advanced options"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "reg_dword" 2
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" 2
 :: Activer hibernation
 echo [93m1.3/ Activate Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
 if not defined admin echo [31mNO CHANGE performed[0m
@@ -66,12 +73,12 @@ if not defined quiet %pausecls%
 
 :: 2 - Disable Core Isolation
 set "Step=2/ Disable Core Isolation. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
-call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "reg_dword" 0
+call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" 0
 
 :: 3 - Set 2 important Power Management registry keys
 set "Step=3.1 et 3.2/ Power Management : IO coalescing timeout set to 60s and policy for devices powering down while the system is running set to power saving
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "reg_dword" 0x0000ea60
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "reg_dword" 1
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 0x7530
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 1
 
 :: 4 - Reconfigure nVidia HDA audio driver for Idle Times
 set "Step=4.1 et 4.2/ Modify Idle Time AC and DC for HDA nVidia driver"
@@ -80,7 +87,11 @@ call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318
 
 :: 5 - Modify TDR Delay to long value to avoid Winlogon or nvlddmkm.dll crashes while in Modern Standby 
 set "Step=5/ Modify Graphics drivers Tdr Delay"
-call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "reg_dword" 60 
+call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" 0x3C 
+
+:: 6 - Delete the Iris Service settings to force recreate it at next reboot
+set "Step=6/ Delete Iris Service key including Cache to force recreate it (Black logon screen?)"
+call :ProcessKey delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\IrisService" 
 
 if defined quiet goto :eof
 if not defined admin goto :eof
@@ -99,7 +110,8 @@ goto :eof
 echo [93m%step%[0m
 echo -------------------
 echo [34mCurrent Registry key BEFORE change:[0m
-reg query %2 /v %3 /t %4
+if "%3" NEQ "" ( reg query %2 /v %3 /t %4 
+) else ( reg query %2 /f "*" /k )
 if errorlevel 1 (
 	echo [91mDID NOT FIND KEY %2 value %3 type %4
 	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS KEY[0m
@@ -111,12 +123,19 @@ if not defined admin (
 	echo [31mNO CHANGE performed[0m
 ) else (
 	if "%1" == "add" reg %1 %2 /v %3 /t %4 /d %5 /f
-	if "%1" == "delete" reg %1 %2 /v %3 /f
+	if "%1" == "delete" reg %1 %2 /f
 )
+
 echo:
-if defined admin echo [35mRegistry key AFTER change:[0m
-if not defined admin echo [35mRegistry key TARGET change:[0m
-reg query %2 /v %3 /t %4
+if defined admin (
+	echo [35mRegistry key AFTER change:[0m
+	if "%3" NEQ "" ( reg query %2 /v %3 /t %4 
+	) else ( reg query %2 /f "*" /k )
+) else (
+	echo [35mRegistry key TARGET change:[0m
+	echo %2  
+	echo       %3    %4    %5[0m
+)
 :EndProcessKey
 echo:
 if not defined quiet %pausecls%
