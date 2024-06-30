@@ -1,7 +1,7 @@
 # ASUS-G713PV-fix
-Fixes for better stability of laptop ASUS G713PV
+Some tweaks to enhance (hopefully fix!) stability for laptop ASUS G713PV, possibly also other models from the same product range
 ## Introduction
-Utility batch script to set a few parameters in the Windows 11 registry and help stabilize the ASUS G713PV laptop. 
+This utility batch script sets a few parameters in Windows 11 registry, and help stabilize the ASUS G713PV laptop. 
 
 Designed and tested on this laptop. Likely to be used also on other laptop from same model range.
 ## Issues covered
