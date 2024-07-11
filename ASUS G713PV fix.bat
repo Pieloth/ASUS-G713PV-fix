@@ -48,6 +48,15 @@ for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
 
 set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 
+if defined rollback (set hibernate=off) else (set hibernate=on)
+if defined rollback (set coreisolation=1) else (set coreisolation=0)
+if defined rollback (set IOcoalescing=0) else (set IOcoalescing=0x7530)
+if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
+if defined rollback (set idletime=04000000) else (set idletime=00000000)
+if defined rollback (set TdrDelay=2) else (set TdrDelay=0x3C)
+if defined rollback set RB=ROLLBACK
+if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
+
 :: Get admin status
 if exist %windir%\system32\config\systemprofile\* (
   echo  ]]] [42m[93m Run with Admin level =^> parameters will be applied[0m
@@ -65,35 +74,37 @@ call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "
 set "Step=1.2/ Add option 'Hibernation timeout' into legacy Power Settings advanced options"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" 2
 :: Activer hibernation
-echo [93m1.3/ Activate Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
-if not defined admin echo [31mNO CHANGE performed[0m
-powercfg /h on
+echo [93m1.3/ %RB% Activate Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
+powercfg /h %hibernate%
+if not defined admin echo [31mNO CHANGE performed. Current Power configuration is:[0m
 powercfg /a | findstr /v "^$"
 if not defined quiet %pausecls%
 
 :: 2 - Disable Core Isolation
-set "Step=2/ Disable Core Isolation. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
-call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" 0
+set "Step=2/ %RB% Disable Core Isolation. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
+call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
 
 :: 3 - Set 3 important Power Management registry keys
-set "Step=3.1 et 3.2/ Power Management : IO coalescing timeout set to 30s and policy for devices powering down while the system is running set to power saving
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 0x7530
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 1
+set "Step=3.2/ policy for devices powering down while the system is running (power saving)
+:: 3.1 Not needed anymore, unless in case
+::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %IOcoalescing%
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 ::set "Step=3.3 Power Management : Networking connectivity in Standby managed by Windows
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 2
 
 :: 4 - Reconfigure nVidia HDA audio driver for Idle Times
-set "Step=4.1 et 4.2/ Modify Idle Time AC and DC for HDA nVidia driver"
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "ConservationIdleTime" "REG_BINARY" 00000000 
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "PerformanceIdleTime" "REG_BINARY" 00000000
+set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for HDA nVidia driver"
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "ConservationIdleTime" "REG_BINARY" %idletime% 
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %idletime%
 
 :: 5 - Modify TDR Delay to long value to avoid Winlogon or nvlddmkm.dll crashes while in Modern Standby 
-set "Step=5/ Modify Graphics drivers Tdr Delay"
-call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" 0x3C 
+:: Not needed anymore, unless in case
+::set "Step=5/ %RB% Modify Graphics drivers Tdr Delay"
+::call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" %TdrDelay% 
 
-:: 7 - Delete the Iris Service settings to force recreate it at next reboot
-set "Step=6/ Delete Iris Service key including Cache to force recreate it on reboot (Black logon screen?)"
-call :ProcessKey delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\IrisService" 
+:: 6 - Delete the Iris Service settings to force recreate it at next reboot
+::set "Step=6/ Delete Iris Service key including Cache to force recreate it on reboot (Black logon screen?)"
+::call :ProcessKey delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\IrisService" 
 
 if defined quiet goto :eof
 if not defined admin goto :eof
