@@ -11,10 +11,10 @@ Summary of different G713PV laptop issues, and status after using this utility b
 
 |Issues on G713PV | After using utility | Comments |
 |-------|-------|---|
-|Screen fast flickers | Solved |Core Isolation OFF still needed |
+|Screen fast flickers and overall stability | Solved |Core Isolation OFF still needed for fast flickers and overall drivers stability|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks|
-|nVidia nvlddmkm.dll crash during Modern Standby|Solved| Long Graphics TDR delay needed when in deep sleep mode |
+|nVidia nvlddmkm.dll crash during Modern Standby|Solved|  |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia HD audio Idle timeouts driver tweaks|
 |Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure same root cause as freezes|
@@ -59,12 +59,14 @@ Not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal
 
 Current Legacy Power Scheme in use can be checked with admin command line: `powercfg /L` 
 
-Script detects and use the GUID for the active Power Scheme, normally balanced, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e. 
+Script detects and use the GUID for the active Power Scheme, normally balanced.
 
-But can be another one if other Legacy Power Schemes have been forced
+Balanced power scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e
+
+But can be another one if other Legacy Power Schemes are in use
 
 > [!TIP]
-> To retreive GUID, script uses the semicolon ":" character. Should be Ok for any Windows language version, but to be confirmed 
+> To retreive GUID, script uses the semicolon ":" character. Should be Ok for any Windows language version, but yet to be confirmed 
 
 ## Software configuration used
 Software configuration used for set up and tests:
@@ -81,7 +83,9 @@ Software configuration used for set up and tests:
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
-> Settings performed for nVidia HDA driver need to be done again each time the nVidia driver is reinstalled! Just rerun the script.
+> Settings performed for nVidia HDA driver need to be done again each time the nVidia HDA audio driver is reinstalled (should not reinstall if same version already installed).
+>
+> Just rerun the script in such case.
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
@@ -123,13 +127,13 @@ No particular impact on performances noted
 
    A laptop reboot is proposed at the end.
 
-> [!TIP]
-> Parameter /q or /Q can be passed on command line. In this case, the "Hit enter to continue" will not be shown, but all actions performed by script can reviewed in the opened terminal window.
->
-> In this case, reboot at the end will no be proposed
+3. **Command line options**
+
+   Following command line options are available
+
+   - /Q  : to run quiet. All actions are performed without pause, and logged into the script terminal window
+   - /R  : Rollback procedure, to retreive default Windows 11 parameters
+
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
 2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce.
-3.  Using G-Helper, when selecting "Optimized" mode, a long 60s timeout is hit, so G-Helper window and "Silent mode" message stay on screen, and disappear after a minute with no other impact
-## Todo
-1. Add a rollback procedure (ongoing), in case needed, with default Windows 11 registry values
