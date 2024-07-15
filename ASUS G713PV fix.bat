@@ -50,10 +50,8 @@ set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 
 if defined rollback (set hibernate=off) else (set hibernate=on)
 if defined rollback (set coreisolation=1) else (set coreisolation=0)
-if defined rollback (set IOcoalescing=0) else (set IOcoalescing=0x7530)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set idletime=04000000) else (set idletime=00000000)
-if defined rollback (set TdrDelay=2) else (set TdrDelay=0x3C)
 if defined rollback set RB=ROLLBACK
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
@@ -85,26 +83,13 @@ set "Step=2/ %RB% Disable Core Isolation. After reboot, clic on 'Ignore' on yell
 call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
 
 :: 3 - Set 3 important Power Management registry keys
-set "Step=3.2/ policy for devices powering down while the system is running (power saving)
-:: 3.1 Not needed anymore, unless in case
-::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\2e601130-5351-4d9d-8e04-252966bad054\c36f0eb4-2988-4a70-8eee-0884fc2c2433\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %IOcoalescing%
+set "Step=3/ policy for devices powering down while the system is running (power saving)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
-::set "Step=3.3 Power Management : Networking connectivity in Standby managed by Windows
-::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 2
 
 :: 4 - Reconfigure nVidia HDA audio driver for Idle Times
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for HDA nVidia driver"
 call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "ConservationIdleTime" "REG_BINARY" %idletime% 
 call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %idletime%
-
-:: 5 - Modify TDR Delay to long value to avoid Winlogon or nvlddmkm.dll crashes while in Modern Standby 
-:: Not needed anymore, unless in case
-::set "Step=5/ %RB% Modify Graphics drivers Tdr Delay"
-::call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" %TdrDelay% 
-
-:: 6 - Delete the Iris Service settings to force recreate it at next reboot
-::set "Step=6/ Delete Iris Service key including Cache to force recreate it on reboot (Black logon screen?)"
-::call :ProcessKey delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\IrisService" 
 
 if defined quiet goto :eof
 if not defined admin goto :eof
