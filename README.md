@@ -1,4 +1,4 @@
-# ASUS-G713PV-fix
+# ASUS-G713PV-fix batch script
 Some tweaks to enhance (hopefully fix!) stability for laptop ASUS G713PV, possibly also other models from the same product range
 ## Introduction
 This utility batch script sets a few parameters in Windows 11 registry, and help stabilize the ASUS G713PV laptop. 
@@ -136,4 +136,15 @@ No particular impact on performances noted
 
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
-2.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce.
+
+# XML file ASUS G713PV Event 1002 crash explorer
+
+This XML files is to be imported into Windows Task Scheduler
+
+It will create a scheduled task, that detects a Winlogon crash, leading to a black logon screen (No Windows spotlight image on logon screen)
+
+After logon, nVidia and AMD icons are lost
+
+The schedule task will restart the nVidia and AMD icons in the Taskbar
+
+3.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce.
