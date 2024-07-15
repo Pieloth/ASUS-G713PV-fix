@@ -139,12 +139,22 @@ No particular impact on performances noted
 
 # XML file ASUS G713PV Event 1002 crash explorer
 
-This XML files is to be imported into Windows Task Scheduler
+## Purpose
 
-It will create a scheduled task, that detects a Winlogon crash, leading to a black logon screen (No Windows spotlight image on logon screen)
+When using the Windows spotlight images on logon screen
 
-After logon, nVidia and AMD icons are lost
+Sometimes, the logon screen does not show image, just black screen, user logo and password prompt
 
-The schedule task will restart the nVidia and AMD icons in the Taskbar
+After loging in, the nVidia and AMD icons in taskbar are gone
 
-3.  Black logon screen sometimes appear, less than before. Need further analysis, but difficult to reproduce.
+This is due to a Winlogon.exe crash, while laptop sleeps in Modern Standby.
+
+This XML files is to be imported into Windows Task Scheduler, it will create a scheduled task, that will detect Winlogon crash (event 1002), and will restart the nVidia and AMD icons
+
+## How to use
+
+1. Start the Windows task scheduler
+
+2. Select Action / Import. Choose the "ASUS G713PV Event 1002 crash explorer.xml" file.
+
+3. You can review the Schedule task wizard, then choose OK. The Schedule task is ready to run
