@@ -137,7 +137,7 @@ No particular impact on performances noted
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
 
-# XML file ASUS G713PV Event 1002 crash explorer
+# XML file: ASUS G713PV Event 1002 crash explorer.xml
 
 ## Purpose
 
