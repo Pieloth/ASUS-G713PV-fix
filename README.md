@@ -13,12 +13,12 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |-------|-------|---|
 |Screen fast flickers and overall stability | Solved |Core Isolation OFF still needed for fast flickers and overall drivers stability|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
-|Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks|
+|Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweak: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|Solved|  |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia HD audio Idle timeouts driver tweaks|
-|Random reboots|Not seen anymore| To be confirmed if this issue is also solved|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially solved|Much less events, but need more understanding of this strange phenomenon. Not sure same root cause as freezes|
-|Interruptions during deep sleep |No real solution|Connected Apps like Steam client, Trucksbook, ... have internet activity while deep sleep, and this wakes laptop regularly |
+|Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2| This issue has been solved (fully TBC) after installing Mediatek Bluetooth driver 1.1037.2.420|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Solved? TBC|Much less events, seems to be fixed with reg key: "Disable networking in standby"|
+
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
 > Modern Standby is not and will never be former S3 sleep. 
@@ -33,7 +33,7 @@ Delay between 1 to more than 30 minutes after standby start!
 
 Huge step ahead: mixing Modern Standby and Hibernation now possible without freeze. 
 
-Hibernation recommended to start at least 1 hour after Modern Standby start, so that Modern Standby Orchestartor can do its duty and saves SSD lifetime too
+Hibernation recommended to start at least 1 hour after Modern Standby start, so that Modern Standby Orchestrator can do its duty and saves SSD lifetime too
 
 Did set it to 3 hours like former legacy default Windows settings. 
 
@@ -73,12 +73,13 @@ Software configuration used for set up and tests:
 
 | device | driver or software version |
 |-------| -------|
-|AMD Graphics | AMD Adrenalin 24.5.1 and 24.6.1|
+|Mediatek Bluetooth| 1.1037.2.420 stabilizes random reboots with Bluetooth LE devices|
+|AMD Graphics | AMD Adrenalin 24.5.1 and above|
 |nVidia Graphics and HDA sound | Graphics 555.85, with HDA Sound 1.4.0.1 |
 |G-Helper| 0.176.0|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID 381b4222-f694-41f0-9685-ff5bb260df2e|
-|Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance|
+|Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
 |Armoury Crate| Not tested |
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
@@ -94,6 +95,7 @@ Software configuration used for set up and tests:
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Policy for devices powering down while the system is running|HKLM\..\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
+|Disable networking in standby|HKLM\..\Control\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |1|0|
 |Idle Time AC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
 |Idle Time DC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
 
@@ -101,7 +103,7 @@ Software configuration used for set up and tests:
 > **REBOOT laptop to take into account changes after script is applied**
 
 > [!IMPORTANT]
-> All tweaks are needed alltogether as a whole to have effect.
+> Better to apply all tweaks alltogether at first and see how it goes. Then possible to rollback some to see effects, after several days of observation
 >
 > Some of the issues get solved only with several of these tweaks
 
