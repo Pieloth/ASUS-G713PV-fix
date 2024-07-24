@@ -51,6 +51,7 @@ set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 if defined rollback (set hibernate=off) else (set hibernate=on)
 if defined rollback (set coreisolation=1) else (set coreisolation=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
+if defined rollback (set netstby=1) else (set netstby=0)
 if defined rollback (set idletime=04000000) else (set idletime=00000000)
 if defined rollback set RB=ROLLBACK
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
@@ -65,14 +66,14 @@ if exist %windir%\system32\config\systemprofile\* (
 if not defined quiet %pausecls%
 
 :: 1 - Hibernation enable and setup
-:: set Fast Startup ON
+:: set Fast Startup ON (not rollbacked)
 set "Step=1.1/ (Re)-Activate Fast Startup"
 call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "REG_DWORD" 1 
-:: show hibernate after options
+:: show hibernate after options (not rollbacked)
 set "Step=1.2/ Add option 'Hibernation timeout' into legacy Power Settings advanced options"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" 2
-:: Activer hibernation
-echo [93m1.3/ %RB% Activate Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
+:: Enable/disable hibernation. Rollback will disable also 1.1 and 1.2
+echo [93m1.3/ %RB% Enable Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
 powercfg /h %hibernate%
 if not defined admin echo [31mNO CHANGE performed. Current Power configuration is:[0m
 powercfg /a | findstr /v "^$"
@@ -83,8 +84,11 @@ set "Step=2/ %RB% Disable Core Isolation. After reboot, clic on 'Ignore' on yell
 call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
 
 :: 3 - Set 3 important Power Management registry keys
-set "Step=3/ policy for devices powering down while the system is running (power saving)
+set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
+:: UNDER TEST : Disable networking in standby to avoid Winlogon crashes in standby
+set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netstby%
 
 :: 4 - Reconfigure nVidia HDA audio driver for Idle Times
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for HDA nVidia driver"
