@@ -51,7 +51,8 @@ set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 if defined rollback (set hibernate=off) else (set hibernate=on)
 if defined rollback (set coreisolation=1) else (set coreisolation=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
-if defined rollback (set netstby=1) else (set netstby=0)
+if defined rollback (set netACstby=1) else (set netACstby=0)
+::if defined rollback (set netDCstby=2) else (set netDCstby=0)
 if defined rollback (set idletime=04000000) else (set idletime=00000000)
 if defined rollback set RB=ROLLBACK
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
@@ -88,7 +89,9 @@ set "Step=3.1/ %RB% policy for devices powering down while the system is running
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: UNDER TEST : Disable networking in standby to avoid Winlogon crashes in standby
 set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netstby%
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
+::set "Step=3.3/ %RB% Networking connectivity in Standby (Disable networking in Standby for DC.). Normally, not needed in DC
+::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
 :: 4 - Reconfigure nVidia HDA audio driver for Idle Times
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for HDA nVidia driver"
