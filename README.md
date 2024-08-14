@@ -16,7 +16,7 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweak: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|Partially solved|Seen rarely now only with HDMI external monitor, being the main screen  |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia, Realtek and AMD HD audio Idle timeouts driver tweaks|
-|Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2| This issue has been solved (fully TBC) after installing Mediatek Bluetooth driver 1.1037.2.420|
+|Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2|No new reboot with latest Mediatek Bluetooth drivers|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially Solved |Seen rarely now only with HDMI external monitor, being the main screen|
 
 ## Hints with Microsoft Modern Standby
