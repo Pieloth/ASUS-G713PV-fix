@@ -53,7 +53,9 @@ if defined rollback (set coreisolation=1) else (set coreisolation=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
 ::if defined rollback (set netDCstby=2) else (set netDCstby=0)
-if defined rollback (set idletime=04000000) else (set idletime=00000000)
+if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
+if defined rollback (set rtkidletime=05000000) else (set rtkidletime=00000000)
+if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
 if defined rollback set RB=ROLLBACK
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
@@ -93,10 +95,16 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944
 ::set "Step=3.3/ %RB% Networking connectivity in Standby (Disable networking in Standby for DC.). Normally, not needed in DC
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Reconfigure nVidia HDA audio driver for Idle Times
+:: 4 - Reconfigure nVidia HDA, Realtek and AMD audio drivers for Idle Times
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for HDA nVidia driver"
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "ConservationIdleTime" "REG_BINARY" %idletime% 
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %idletime%
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
+set "Step=5.1 et 5.2/ %RB% Modify Idle Time AC and DC for Realtek driver"
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
+set "Step=6.1 et 6.2/ %RB% Modify Idle Time AC and DC for AMD audio driver"
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
+call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
