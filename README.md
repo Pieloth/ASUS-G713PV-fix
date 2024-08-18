@@ -3,7 +3,7 @@ A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV unstabilitie
 
 Possibly works on other models from the same brand or product range too
 ## Introduction
-This utility batch script sets a few parameters in Windows 11 registry, and help stabilize the ASUS G713PV laptop. 
+This .bat script sets a few parameters in Windows 11 registry, to stabilize ASUS G713PV laptop. 
 
 Designed and tested on this laptop. Likely to be used also on other laptop from same model range.
 ## Issues covered
@@ -13,13 +13,13 @@ Summary of different G713PV laptop issues, and status after using this utility b
 
 |Issues on G713PV | After using utility | Comments |
 |-------|-------|---|
-|Screen fast flickers and overall stability | Solved |Core Isolation OFF still needed for fast flickers and overall drivers stability|
+|Laptop screen fast flickers and overall stability | Solved |Core Isolation OFF still needed for fast flickers and overall drivers stability|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
-|Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweak: Policy for devices powering down while the system is running|
-|nVidia nvlddmkm.dll crash during Modern Standby|Partially solved|Seen rarely now only with HDMI external monitor, being the main screen  |
+|Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
+|nVidia nvlddmkm.dll crash during Modern Standby|Solved|No new event |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia, Realtek and AMD HD audio Idle timeouts driver tweaks|
 |Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2|No new reboot with latest Mediatek Bluetooth driver|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Partially Solved |Seen rarely now only with HDMI external monitor, being the main screen|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Solved TBC |No new event seen |
 
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
