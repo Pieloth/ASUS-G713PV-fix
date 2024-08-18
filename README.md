@@ -1,5 +1,7 @@
 # Batch script: ASUS_G713PV_fix.bat 
-Some tweaks to enhance (hopefully fix!) stability for laptop ASUS G713PV, possibly also other models from the same product range
+A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV unstabilities.
+
+Possibly works on other models from the same brand or product range too
 ## Introduction
 This utility batch script sets a few parameters in Windows 11 registry, and help stabilize the ASUS G713PV laptop. 
 
