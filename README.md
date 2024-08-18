@@ -98,8 +98,12 @@ Software configuration used for set up and tests:
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Policy for devices powering down while the system is running|HKLM\..\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
 |Disable networking in standby|HKLM\..\Control\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |1|0|
-|Idle Time AC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
-|Idle Time DC for HDA nVidia driver (s)|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
+|Idle Time AC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
+|Idle Time DC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
+|Idle Time AC for Realtek driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings > ConservationIdleTime (BINARY) |05000000|00000000|
+|Idle Time DC for Realtek driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings > PerformanceIdleTime (BINARY) |05000000|00000000|
+|Idle Time AC for AMD streaming driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > ConservationIdleTime (BINARY) |03000000|00000000|
+|Idle Time DC for AMD streaming driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > PerformanceIdleTime (BINARY) |03000000|00000000|
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
