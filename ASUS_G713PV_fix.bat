@@ -25,7 +25,7 @@ echo                    [91m]]] Install parameters for ASUS G713PV [[[[0m
 echo:
 echo This installer sets up some parameters and registries to best stabilize this laptop
 echo: 
-echo Use also G Helper instead of Armoury Crate for even better stability
+echo Use also G Helper instead of Armoury Crate for even better stability ([91mhttps://github.com/seerge/g-helper/releases[0m)
 echo:
 
 set "pausecls=(pause & cls)"
@@ -47,6 +47,18 @@ for /f "tokens=2 delims=:" %%i in ("%actpowplan%") do set actpowplan1=%%i
 for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
 
 set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
+
+:: Retreive Media classes that need power Idle Time adjustment
+for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "NVIDIA High Definition Audio"') do set nVidiaHDA=%%j & goto :stopnVidiaHDA
+:stopnVidiaHDA
+for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "Realtek High Definition Audio"') do set Realtek=%%j & goto :stopRealtek
+:stopRealtek
+for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "AMD Streaming Audio Device"') do set AMDstreaming=%%j & goto :stopAMDstreaming
+:stopAMDstreaming
+:: Remove spaces in string
+set nVidiaHDA=%nVidiaHDA: =%
+set Realtek=%Realtek: =%
+set AMDstreaming=%AMDstreaming: =%
 
 if defined rollback (set hibernate=off) else (set hibernate=on)
 if defined rollback (set coreisolation=1) else (set coreisolation=0)
@@ -95,16 +107,16 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944
 ::set "Step=3.3/ %RB% Networking connectivity in Standby (Disable networking in Standby for DC.). Normally, not needed in DC
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Reconfigure nVidia HDA, Realtek and AMD audio drivers for Idle Times
+:: 4 - Disable Idle times for nVidia HDA, Realtek and AMD audio drivers 
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for HDA nVidia driver"
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
+call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
+call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
 set "Step=5.1 et 5.2/ %RB% Modify Idle Time AC and DC for Realtek driver"
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
+call :ProcessKey add "%Realtek%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
+call :ProcessKey add "%Realtek%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
 set "Step=6.1 et 6.2/ %RB% Modify Idle Time AC and DC for AMD audio driver"
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
-call :ProcessKey add "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
