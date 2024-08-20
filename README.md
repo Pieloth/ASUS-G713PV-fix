@@ -67,6 +67,9 @@ Balanced power scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e
 
 But can be another one if other Legacy Power Schemes are in use
 
+> [!WARNING]
+> Script currently will not work for custom Power Plans. Only default ones can be used.
+
 > [!TIP]
 > To retreive GUID, script uses the semicolon ":" character. Should be Ok for any Windows language version, but yet to be confirmed 
 
