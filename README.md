@@ -17,7 +17,7 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|Solved|No new event |
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia, Realtek and AMD HD audio Idle timeouts driver tweaks|
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|AMD HD audio Idle timeouts driver tweak stops messing nVidia HDA and Realtek drivers, and stabilizes whole laptop|
 |Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2|No new reboot with latest Mediatek Bluetooth driver|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Solved TBC |No new event seen |
 
@@ -101,10 +101,6 @@ Software configuration used for set up and tests:
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Policy for devices powering down while the system is running|HKLM\..\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
 |Disable networking in standby|HKLM\..\Control\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |1|0|
-|Idle Time AC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
-|Idle Time DC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
-|Idle Time AC for Realtek driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings > ConservationIdleTime (BINARY) |05000000|00000000|
-|Idle Time DC for Realtek driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings > PerformanceIdleTime (BINARY) |05000000|00000000|
 |Idle Time AC for AMD streaming driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > ConservationIdleTime (BINARY) |03000000|00000000|
 |Idle Time DC for AMD streaming driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > PerformanceIdleTime (BINARY) |03000000|00000000|
 
