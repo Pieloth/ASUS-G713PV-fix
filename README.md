@@ -39,14 +39,6 @@ Hibernation recommended to start at least 1 hour after Modern Standby start, so 
 
 Did set it to 3 hours like former legacy default Windows settings. 
 
-> [!NOTE]
-> Sometimes, rarely, Windows Orchestrator hang, and will not let laptop sleep at all 
->
-> Situation can be checked in a Terminal admin console, with command: `powercfg /requests`
-> 
-> Anything showing there in a section means Windows will not yet allow laptop to sleep
->
-> Simply exiting Standby, or session Logoff/Logon, solves issue. 
 ## Prerequisites on Modern Standby and Legacy Power Schemes to use this script
 > [!IMPORTANT]
 > Modern Standby should be ENABLED!
@@ -143,6 +135,10 @@ No particular impact on performances noted
 
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
+2. Windows Orchestrator. Rarely, may hang, and will not let laptop sleep at all 
+Situation can be checked in a Terminal admin console, with command: `powercfg /requests` 
+Anything showing there in a section means Windows will not yet allow laptop to sleep. Simply exiting Standby, or session Logoff/Logon, solves issue.
+Note this issue has been seen only once 
 
 # XML file: ASUS_G713PV_Event1002_Winlogon_crash.xml
 
