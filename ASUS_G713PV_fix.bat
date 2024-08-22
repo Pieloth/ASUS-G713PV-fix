@@ -107,13 +107,13 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944
 ::set "Step=3.3/ %RB% Networking connectivity in Standby (Disable networking in Standby for DC.). Normally, not needed in DC
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Disable Idle times for nVidia HDA, Realtek and AMD audio drivers 
+:: 4 - Disable Idle times for AMD audio drivers. nVidia HDA and Realtek no more needed in this case
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
-set "Step=5.1 et 5.2/ %RB% Modify Idle Time AC and DC for nVidia HDA driver"
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
+:: set "Step=5.1 et 5.2/ %RB% Modify Idle Time AC and DC for nVidia HDA driver"
+:: call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
+:: call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
 :: set "Step=6.1 et 6.2/ %RB% Modify Idle Time AC and DC for Realtek Audio driver"
 :: call :ProcessKey add "%Realtek%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
 :: call :ProcessKey add "%Realtek%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
