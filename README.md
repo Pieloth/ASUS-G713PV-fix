@@ -78,7 +78,7 @@ Software configuration used for set up and tests:
 
 | device | driver or software version |
 |-------| -------|
-|Mediatek Bluetooth| 1.1037.2.420 stabilizes random reboots with Bluetooth LE devices|
+|Mediatek Bluetooth| 1.1037.2.433 no random reboots seen with Bluetooth LE devices|
 |AMD Graphics | AMD Adrenalin 24.5.1 and above|
 |nVidia Graphics and HDA sound | Graphics 555.85, with HDA Sound 1.4.0.1 |
 |G-Helper| 0.176.0|
