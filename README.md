@@ -81,7 +81,7 @@ Software configuration used for set up and tests:
 |Mediatek Bluetooth| 1.1037.2.433 no random reboots seen with Bluetooth LE devices|
 |AMD Graphics | AMD Adrenalin 24.5.1 and above|
 |nVidia Graphics and HDA sound | Graphics 555.85, with HDA Sound 1.4.0.1 |
-|G-Helper| 0.176.0|
+|G-Helper| 0.176.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID 381b4222-f694-41f0-9685-ff5bb260df2e|
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
@@ -89,9 +89,9 @@ Software configuration used for set up and tests:
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
-> Settings performed for nVidia HDA driver need to be done again each time the nVidia HDA audio driver is reinstalled (should not reinstall if same version already installed).
+> Settings performed for AMD Streaming Audio driver need to be done again each time this driver is reinstalled, along with Adrenalin suite.
 >
-> Just rerun the script in such case.
+> Just rerun the script in such case, or check the Idle Timeouts values for this driver.
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
