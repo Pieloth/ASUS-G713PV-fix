@@ -101,13 +101,13 @@ call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCod
 :: 3 - Set 3 important Power Management registry keys
 set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
-:: UNDER TEST : Disable networking in standby to avoid Winlogon crashes in standby
+:: OPTIONAL: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
 set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
-::set "Step=3.3/ %RB% Networking connectivity in Standby (Disable networking in Standby for DC.). Normally, not needed in DC
+::set "Step=3.3/ %RB% Networking connectivity in DC Standby (Disable networking in Standby for DC.). Normally, not necessary in DC (Windows managed => no connectivity)
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Disable Idle times for nVidia HDA, Realtek and AMD audio drivers 
+:: 4 - Disable Idle times for AMD audio drivers. nVidia HDA and Realtek no more needed in this case
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
@@ -123,12 +123,15 @@ if not defined admin goto :eof
 echo:
 echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!
 echo:
-set /p continue="Do you want to reboot computer in 30 seconds? (y/n): "
-if /I "%continue%" == "y" (
-	echo shutdown in 30 seconds.
-	shutdown /r
-)
+set /p continue="Do you want to reboot computer in 30 seconds? ([y]/n): "
+if /I "%continue%" == "y" call :DoShutdown
+if /I "%continue%" == "" call :DoShutdown
 goto :eof
+
+:DoShutdown
+echo shutdown in 30 seconds.
+shutdown /r
+exit /b
 
 :ProcessKey   - Processes the current registry key
 ::cls
