@@ -87,8 +87,8 @@ Software configuration used for set up and tests:
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
-|Enable Fast Startup|HKLM\..\Control\Session Manager\Power > HiberbootEnabled (dword)|0 or 1|1|
-|Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\..\Control\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
+|Enable Fast Startup|HKLM\..\Session Manager\Power > HiberbootEnabled (dword)|0 or 1|1|
+|Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\..\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Policy for devices powering down while the system is running|HKLM\..\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
