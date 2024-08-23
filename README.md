@@ -17,7 +17,7 @@ Summary of different G713PV laptop issues, and status after using this utility b
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|Solved|No new event |
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|nVidia, Realtek and AMD HD audio Idle timeouts driver tweaks|
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|AMD HD audio and nVidia HDA Audio Idle timeouts driver tweak stops messing and stabilizes whole laptop|
 |Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2|No new reboot with latest Mediatek Bluetooth driver|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Solved TBC |No new event seen |
 
@@ -39,14 +39,6 @@ Hibernation recommended to start at least 1 hour after Modern Standby start, so 
 
 Did set it to 3 hours like former legacy default Windows settings. 
 
-> [!NOTE]
-> Sometimes, rarely, Windows Orchestrator hang, and will not let laptop sleep at all 
->
-> Situation can be checked in a Terminal admin console, with command: `powercfg /requests`
-> 
-> Anything showing there in a section means Windows will not yet allow laptop to sleep
->
-> Simply exiting Standby, or session Logoff/Logon, solves issue. 
 ## Prerequisites on Modern Standby and Legacy Power Schemes to use this script
 > [!IMPORTANT]
 > Modern Standby should be ENABLED!
@@ -78,10 +70,10 @@ Software configuration used for set up and tests:
 
 | device | driver or software version |
 |-------| -------|
-|Mediatek Bluetooth| 1.1037.2.420 stabilizes random reboots with Bluetooth LE devices|
+|Mediatek Bluetooth| 1.1037.2.433 no random reboots seen due to Bluetooth LE devices use|
 |AMD Graphics | AMD Adrenalin 24.5.1 and above|
 |nVidia Graphics and HDA sound | Graphics 555.85, with HDA Sound 1.4.0.1 |
-|G-Helper| 0.176.0|
+|G-Helper| 0.176.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID 381b4222-f694-41f0-9685-ff5bb260df2e|
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
@@ -89,9 +81,9 @@ Software configuration used for set up and tests:
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
-> Settings performed for nVidia HDA driver need to be done again each time the nVidia HDA audio driver is reinstalled (should not reinstall if same version already installed).
+> Settings performed for nVidia HDA driver and for AMD Streaming Audio driver need to be applied again each time these drivers are reinstalled, along with Adrenalin suite 
 >
-> Just rerun the script in such case.
+> Just rerun the script in such case after driver installation.
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
@@ -101,12 +93,10 @@ Software configuration used for set up and tests:
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Policy for devices powering down while the system is running|HKLM\..\Control\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
 |Disable networking in standby|HKLM\..\Control\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |1|0|
-|Idle Time AC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
-|Idle Time DC for HDA nVidia driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
-|Idle Time AC for Realtek driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings > ConservationIdleTime (BINARY) |05000000|00000000|
-|Idle Time DC for Realtek driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0005\PowerSettings > PerformanceIdleTime (BINARY) |05000000|00000000|
-|Idle Time AC for AMD streaming driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > ConservationIdleTime (BINARY) |03000000|00000000|
-|Idle Time DC for AMD streaming driver|HKLM\..\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > PerformanceIdleTime (BINARY) |03000000|00000000|
+|Idle Time AC for HDA nVidia driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
+|Idle Time DC for HDA nVidia driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
+|Idle Time AC for AMD streaming driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > ConservationIdleTime (BINARY) |03000000|00000000|
+|Idle Time DC for AMD streaming driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > PerformanceIdleTime (BINARY) |03000000|00000000|
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
@@ -147,6 +137,10 @@ No particular impact on performances noted
 
 ## Known issues - To be digged further
 1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
+2. Windows Orchestrator. Rarely, may hang, and will not let laptop sleep at all 
+Situation can be checked in a Terminal admin console, with command: `powercfg /requests` 
+Anything showing there in a section means Windows will not yet allow laptop to sleep. Simply exiting Standby, or session Logoff/Logon, solves issue.
+Note this issue has been seen only once 
 
 # XML file: ASUS_G713PV_Event1002_Winlogon_crash.xml
 
