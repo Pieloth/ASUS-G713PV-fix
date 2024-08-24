@@ -66,7 +66,7 @@ if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
 ::if defined rollback (set netDCstby=2) else (set netDCstby=0)
 if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
-if defined rollback (set rtkidletime=05000000) else (set rtkidletime=00000000)
+if defined rollback (set rtkidletime=05000000) else (set rtkidletime=FFFFFFFF)
 if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
 if defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
@@ -107,16 +107,16 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944
 ::set "Step=3.3/ %RB% Networking connectivity in DC Standby (Disable networking in Standby for DC.). Normally, not necessary in DC (Windows managed => no connectivity)
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Disable Idle times for AMD audio drivers. nVidia HDA and Realtek no more needed in this case
+:: 4 - Disable Idle times for nVidia HDA, AMD and Realtek audio drivers. Realtek forces last byte so infinite time instead of disable
 set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 set "Step=5.1 et 5.2/ %RB% Modify Idle Time AC and DC for nVidia HDA driver"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-:: set "Step=6.1 et 6.2/ %RB% Modify Idle Time AC and DC for Realtek Audio driver"
-:: call :ProcessKey add "%Realtek%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
-:: call :ProcessKey add "%Realtek%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
+set "Step=6.1 et 6.2/ %RB% Modify Idle Time AC and DC for Realtek Audio driver"
+call :ProcessKey add "%Realtek%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
+call :ProcessKey add "%Realtek%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
@@ -131,6 +131,7 @@ goto :eof
 :DoShutdown
 echo shutdown in 30 seconds. ]]] CLOSE ALL DOCUMENTS [[[
 shutdown /r
+timeout /t 30
 exit /b
 
 :ProcessKey   - Processes the current registry key
