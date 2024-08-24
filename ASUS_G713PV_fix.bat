@@ -68,7 +68,7 @@ if defined rollback (set netACstby=1) else (set netACstby=0)
 if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
 if defined rollback (set rtkidletime=05000000) else (set rtkidletime=00000000)
 if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
-if defined rollback set RB=ROLLBACK
+if defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
 :: Get admin status
@@ -101,7 +101,7 @@ call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCod
 :: 3 - Set 3 important Power Management registry keys
 set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
-:: OPTIONAL: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
+:: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
 set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
 ::set "Step=3.3/ %RB% Networking connectivity in DC Standby (Disable networking in Standby for DC.). Normally, not necessary in DC (Windows managed => no connectivity)
@@ -129,7 +129,7 @@ if /I "%continue%" == "" call :DoShutdown
 goto :eof
 
 :DoShutdown
-echo shutdown in 30 seconds.
+echo shutdown in 30 seconds. ]]] CLOSE ALL DOCUMENTS [[[
 shutdown /r
 exit /b
 
