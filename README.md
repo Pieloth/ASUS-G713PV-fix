@@ -81,9 +81,9 @@ Software configuration used for set up and tests:
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
-> Settings performed for nVidia HDA driver and for AMD Streaming Audio driver need to be applied again each time these drivers are reinstalled, along with Adrenalin suite 
+> Settings performed for nVidia HDA, Realtek HDA and for AMD Streaming Audio drivers need to be applied again each time these drivers are reinstalled, along with Adrenalin suite 
 >
-> Just rerun the script in such case after driver installation.
+> Just rerun the script in such case after a driver installation.
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
 |:-----|:---------------------|:-----------:|:------------------------:|
@@ -93,10 +93,12 @@ Software configuration used for set up and tests:
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\..\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Policy for devices powering down while the system is running|HKLM\..\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
 |Disable networking in standby|HKLM\..\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |1|0|
-|Idle Time AC for HDA nVidia driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
-|Idle Time DC for HDA nVidia driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
+|Idle Time AC for nVidia HDA driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > ConservationIdleTime (BINARY) |04000000|00000000|
+|Idle Time DC for nVidia HDA driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0003\PowerSettings > PerformanceIdleTime (BINARY) |04000000|00000000|
 |Idle Time AC for AMD streaming driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > ConservationIdleTime (BINARY) |03000000|00000000|
 |Idle Time DC for AMD streaming driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > PerformanceIdleTime (BINARY) |03000000|00000000|
+|Idle Time AC for Realtek HDA driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > ConservationIdleTime (BINARY) |05000000|05FFFFFF|
+|Idle Time DC for Realtek HDA driver|HKLM\..\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0007\PowerSettings > PerformanceIdleTime (BINARY) |05000000|05FFFFFF|
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
