@@ -65,11 +65,7 @@ if defined rollback (set hibernate=off) else (set hibernate=on)
 if defined rollback (set coreisolation=1) else (set coreisolation=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
-::if defined rollback (set netDCstby=2) else (set netDCstby=0)
-if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
-if defined rollback (set rtkidletime=05000000) else (set rtkidletime=00000000)
-if defined rollback (set rtkidlestate=03000000) else (set rtkidlestate=00000000)
-if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
+if defined rollback (set PwrIdleState=03000000) else (set PwrIdleState=00000000)
 if defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
@@ -106,20 +102,14 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531
 :: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
 set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
-::set "Step=3.3/ %RB% Networking connectivity in DC Standby (Disable networking in Standby for DC.). Normally, not necessary in DC (Windows managed => no connectivity)
-::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Disable Idle times for nVidia HDA, AMD and Realtek audio drivers. Realtek forces last byte so infinite time instead of disable
-set "Step=4.1 et 4.2/ %RB% Disable Idle Time AC and DC for AMD Streaming Audio driver"
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
-set "Step=5.1 et 5.2/ %RB% Disable Idle Time AC and DC for nVidia HDA driver"
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-set "Step=6.1 et 6.2/ %RB% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
-:: call :ProcessKey add "%Realtek%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
-:: call :ProcessKey add "%Realtek%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
-call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %rtkidlestate%
+:: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
+set "Step=4.1/ %RB% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+set "Step=4.2/ %RB% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
+call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+set "Step=4.3/ %RB% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
+call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
