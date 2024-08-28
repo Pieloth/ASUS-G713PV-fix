@@ -43,7 +43,7 @@ Did set it to 3 hours like former legacy default Windows settings.
 > [!IMPORTANT]
 > Modern Standby should be ENABLED!
 >
-> If previously disabled, better to re-enable it. Should run fine now along with Hibernation 
+> If previously disabled, better to re-enable it. It can be used now along with Hibernation 
 
 All tweaks are applied to the **current Windows 11 Power Scheme** in use.
 
