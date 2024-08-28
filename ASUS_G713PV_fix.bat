@@ -41,21 +41,22 @@ goto :ReadParams
 :EndReadParams
 
 :: Retreive legacy active power scheme GUID from 1st line of powercfg /q
-for /f "delims=" %%i in ('powercfg /q') do set actpowplan=%%i & goto :stop
-:stop
+for /f "delims=" %%i in ('powercfg /q') do set actpowplan=%%i & goto :EndGUID
+:EndGUID
 for /f "tokens=2 delims=:" %%i in ("%actpowplan%") do set actpowplan1=%%i
 for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
 
 set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 
-:: Retreive Media classes that need power Idle Time adjustment
-for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "NVIDIA*Audio"') do set nVidiaHDA=%%j & goto :stopnVidiaHDA
-:stopnVidiaHDA
-for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "Realtek*Audio"') do set Realtek=%%j & goto :stopRealtek
-:stopRealtek
-for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "AMD Streaming Audio"') do set AMDstreaming=%%j & goto :stopAMDstreaming
-:stopAMDstreaming
-:: Remove spaces in string
+:: Retreive Media classes that need power Idle Time adjustment.
+:: See https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/audio-device-class-inactivity-timer-implementation
+for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "NVIDIA*Audio"') do set nVidiaHDA=%%j & goto :EndnVidiaHDA
+:EndnVidiaHDA
+for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "Realtek*Audio"') do set Realtek=%%j & goto :EndRealtek
+:EndRealtek
+for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "AMD Streaming Audio"') do set AMDstreaming=%%j & goto :EndAMDstreaming
+:EndAMDstreaming
+:: Remove spaces in strings
 set nVidiaHDA=%nVidiaHDA: =%
 set Realtek=%Realtek: =%
 set AMDstreaming=%AMDstreaming: =%
@@ -64,10 +65,7 @@ if defined rollback (set hibernate=off) else (set hibernate=on)
 if defined rollback (set coreisolation=1) else (set coreisolation=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
-::if defined rollback (set netDCstby=2) else (set netDCstby=0)
-if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
-if defined rollback (set rtkidletime=05000000) else (set rtkidletime=FFFFFFFF)
-if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
+if defined rollback (set PwrIdleState=03000000) else (set PwrIdleState=00000000)
 if defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
@@ -98,32 +96,27 @@ if not defined quiet %pausecls%
 set "Step=2/ %RB% Disable Core Isolation. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
 call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
 
-:: 3 - Set 3 important Power Management registry keys
+:: 3 - Set important Power Management registry keys
 set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
 set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
-::set "Step=3.3/ %RB% Networking connectivity in DC Standby (Disable networking in Standby for DC.). Normally, not necessary in DC (Windows managed => no connectivity)
-::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %netDCstby%
 
-:: 4 - Disable Idle times for nVidia HDA, AMD and Realtek audio drivers. Realtek forces last byte so infinite time instead of disable
-set "Step=4.1 et 4.2/ %RB% Modify Idle Time AC and DC for AMD Streaming Audio driver"
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
-set "Step=5.1 et 5.2/ %RB% Modify Idle Time AC and DC for nVidia HDA driver"
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-set "Step=6.1 et 6.2/ %RB% Modify Idle Time AC and DC for Realtek Audio driver"
-call :ProcessKey add "%Realtek%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %rtkidletime% 
-call :ProcessKey add "%Realtek%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %rtkidletime%
+:: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
+set "Step=4.1/ %RB% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+set "Step=4.2/ %RB% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
+call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+set "Step=4.3/ %RB% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
+call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
 echo:
 echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!
 echo:
-set /p continue="Do you want to reboot computer in 30 seconds? ([y]/n): "
+set /p continue="Do you want to reboot computer in 30 seconds? (Y/n): "
 if /I "%continue%" == "y" call :DoShutdown
 if /I "%continue%" == "" call :DoShutdown
 goto :eof
