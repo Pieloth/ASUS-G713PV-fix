@@ -6,28 +6,28 @@ Possibly works on other models from the same brand or product range too
 This .bat script sets a few parameters in Windows 11 registry, to stabilize ASUS G713PV laptop. 
 
 Designed and tested on this laptop. Likely to be used also on other laptop from same model range.
-## Issues covered
+## Issues solved
 Summary of different G713PV laptop issues, and status after using this utility batch script.
 
 **Solved** means here: **Not experienced this anymore** 
 
-|Issues on G713PV | After using utility | Comments |
-|-------|-------|---|
-|Laptop screen fast flickers and overall stability | Solved |Core Isolation OFF still needed for fast flickers and overall drivers stability|
-|Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Solved |Bonus: Laptop now start really faster from Power Off or Hibernation!
-|Laptop crash/freeze on Wake up from Modern Standby|Solved|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
-|nVidia nvlddmkm.dll crash during Modern Standby|Solved|No new event |
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Solved|AMD HD audio and nVidia HDA Audio Idle timeouts driver tweak stops messing and stabilizes whole laptop|
-|Random reboots|Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2|No new reboot with latest Mediatek Bluetooth driver|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Solved TBC |No new event seen |
+|Issues on G713PV |  Comments |
+|-------|-----|
+|Laptop screen fast flickers and overall stability |Core Isolation OFF still needed for fast flickers and overall drivers stability|
+|Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
+|Laptop crash/freeze on Wake up from Modern Standby|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
+|nVidia nvlddmkm.dll crash during Modern Standby|No new event |
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|AMD HD audio and nVidia HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop|
+|Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|No new event seen after Idle power settings applied to audio devices nVidia, Realtek and AMD|
 
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
 > Modern Standby is not and will never be former S3 sleep. 
 
-A new way Microsoft wants laptops to sleep, somehow like a smartphone.
+The way Microsoft wants laptops to sleep, somehow like a smartphone.
 
-Biggest difference stands in that sleep is not immediate. 
+Biggest difference with S3 stands in that sleep is not immediate. 
 
 Windows 11 runs an Orchestrator at standby start, performing maintenance tasks, before letting laptop to go to sleep. 
 
@@ -85,17 +85,17 @@ Software configuration used for set up and tests:
 >
 > Just rerun the script in such case after a driver installation.
 
-|Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Default value|Target value set by script|
+|Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Windows or driver value|New tweaked value|
 |:-----|:---------------------|:-----------:|:------------------------:|
 |Enable Fast Startup|HKLM\...\Session Manager\Power > HiberbootEnabled (dword)|0 or 1|1|
 |Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\...\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\...\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
-|Policy for devices powering down while the system is running|HKLM\...\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |0|1|
-|Disable networking in standby|HKLM\...\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\<Power Scheme GUID> > ACSettingIndex (dword) |1|0|
-|Idle Power state D0 for nVidia HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ <nVidia audio>\PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
-|Idle Power state D0 for AMD streaming driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ <AMD audio>\PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
-|Idle Power state D0 for Realtek HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ <Realtek audio>\PowerSettings > IdlePowerState (BINARY) |03000000|05FFFFFF|
+|Policy for devices powering down while the system is running|HKLM\...\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex (dword) |0|1|
+|Disable networking in standby|HKLM\...\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex (dword) |1|0|
+|Idle Power state D0 for nVidia HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "nVidia audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
+|Idle Power state D0 for AMD streaming driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "AMD audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
+|Idle Power state D0 for Realtek HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "Realtek audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
