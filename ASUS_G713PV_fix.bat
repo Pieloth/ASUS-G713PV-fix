@@ -97,7 +97,7 @@ set "Step=2/ %RB% Disable Core Isolation. After reboot, clic on 'Ignore' on yell
 call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
 
 :: 3 - Set important Power Management registry keys
-set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)
+set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
 set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
