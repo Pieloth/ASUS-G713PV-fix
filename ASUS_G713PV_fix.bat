@@ -100,7 +100,7 @@ call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCod
 set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
-set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)
+set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
 
 :: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
