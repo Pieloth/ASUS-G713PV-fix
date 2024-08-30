@@ -72,7 +72,7 @@ Software configuration used for set up and tests:
 |-------| -------|
 |Mediatek Bluetooth| 1.1037.2.433 no random reboots seen due to Bluetooth LE devices use|
 |AMD Graphics | AMD Adrenalin 24.5.1 and above|
-|nVidia Graphics and HDA sound | Graphics 555.85, with HDA Sound 1.4.0.1 |
+|nVidia Graphics and HDA sound | Graphics: 536.45 and 555.85 - HD audio: 1.3.40.14 and 1.4.0.1 |
 |G-Helper| 0.176.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID 381b4222-f694-41f0-9685-ff5bb260df2e|
