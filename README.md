@@ -81,7 +81,9 @@ Software configuration used for set up and tests:
 | Windows version | Tested with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
-> Settings performed for nVidia HDA, Realtek HDA and for AMD Streaming Audio drivers need to be applied again each time these drivers are reinstalled, along with Adrenalin suite 
+> Settings performed for nVidia HDA, Realtek HDA and for AMD Streaming Audio drivers need to be applied again each time these drivers are reinstalled, along with Adrenalin suite
+>
+> "nVidia audio", "AMD audio", and "Realtek audio" device numbers hereunder are automatically detected by script
 >
 > Just rerun the script in such case after a driver installation.
 
