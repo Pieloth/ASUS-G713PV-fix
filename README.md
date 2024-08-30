@@ -7,7 +7,7 @@ This .bat script sets a few parameters in Windows 11 registry, to stabilize ASUS
 
 Designed and tested on this laptop. Likely to be used also on other laptop from same model range.
 ## Issues solved
-Summary of different G713PV laptop issues, and status after using this utility batch script.
+Summary of different G713PV laptop issues which are 100% solved or almost, and status after using this utility batch script.
 
 **Solved** means here: **Not experienced this anymore** 
 
