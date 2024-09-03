@@ -19,7 +19,7 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 |nVidia nvlddmkm.dll crash during Modern Standby|No new event |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|AMD HD audio and nVidia HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop|
 |Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Event can happen sometimes while Windows updates are performed during sleep|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Event happens sometimes while Windows updates are performed during sleep and if device lock ask for password is set to other than "always" or "never" in Windows settings!|
 
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
@@ -147,15 +147,20 @@ Note this issue has been seen only once
 
 ## Purpose
 
+
 When using the Windows spotlight images on logon screen
 
 Sometimes, the logon screen does not show image, just black screen, user logo and password prompt
 
-After loging in, the nVidia and AMD icons in taskbar are gone
+After loging in, the nVidia and AMD icons in taskbar are gone. This XML files is to be imported into Windows Task Scheduler, it will create a scheduled task, that will detect Winlogon crash (event 1002), and will restart the nVidia and AMD icons
 
-This is due to a Winlogon.exe crash, while laptop sleeps in Modern Standby.
-
-This XML files is to be imported into Windows Task Scheduler, it will create a scheduled task, that will detect Winlogon crash (event 1002), and will restart the nVidia and AMD icons
+> [!WARNING]
+> This black screen due to Winlogon.exe crash during sleep and userinit.exe restart is due to some Windows 11 Authentification and device lock misbehavior while sleeping, and with Updates done at the same time.
+>
+> The easiest way to get rid and workaround this is to set the option "Device lock and ask for password" timeout to "Always" or "Never" in Windows Settings/Account/Connexion options.
+> By default, it is set to 15 mn, so that lock can happen after sleep has started.
+> 
+> Registry options to disable Wakeup Password with Modern Standby: HKEY_CURRENT_USER\Control Panel\Desktop 32-bit DWORD value DelayLockInterval set to 0
 
 ## How to use
 
