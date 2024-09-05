@@ -1,4 +1,9 @@
-# Batch script: ASUS_G713PV_fix.bat 
+# Batch script New Approach: ASUS_G713PV_fix.bat 
+On this branch, a good stability is obtained with:
+
+1. In Settings/Accounts. set for: "If you’ve been away, when should Windows require you to sign in again?" option and select Always
+2. All Drivers and apps provided by ASUS. Especially, the AMD default driver, without Adrenalin application. This way, no AMD Streaming sound driver gets installed, 
+
 A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV unstabilities.
 
 Possibly works on other models from the same brand or product range too
