@@ -49,9 +49,11 @@ for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
 set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 
 if defined rollback (set hibernate=off) else (set hibernate=on)
+if defined rollback (set signInTimeout=0x384) else (set signInTimeout=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
-f defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
+if defined rollback (set modeStby=0) else (set modeStby=1)
+if defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
 :: Get admin status
@@ -72,13 +74,21 @@ powercfg /h %hibernate%
 if not defined admin echo [31mNO CHANGE performed. Current Power configuration is:[0m
 powercfg /a | findstr /v "^$"
 if not defined quiet %pausecls%
+:: Set Ask for sign in to "Always " after leaving. This fixes Fast flickers and Winlogon.exe crash while sleep and black logon screen/lost nVidia icons
+set "Step=3/ %RB% Set sign in timeout after leaving to Always to fix flickers and black logon screen"
+call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterval" "REG_DWORD" %signInTimeout%
 
-:: 3 - Set important Power Management registry keys
-set "Step=3/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)"
+:: 3 - Tweak Disconnected Standby behavior and avoid crashs
+:: Important Power Management registry key, as some device driver does not handle properly "Performance" idle mode
+set "Step=4/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
-:: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
-set "Step=4/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)"
+:: RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
+set "Step=5/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
+:: Enhance Disconnected standby experience in Aggressive mode
+set "Step=6/ %RB% Disconnected Standby mode in AC and DC set to Aggressive for better experience"
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
