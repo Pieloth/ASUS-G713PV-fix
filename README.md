@@ -6,7 +6,7 @@ On this branch, a good stability is obtained with:
    - Fast Flickers on laptop screen. No need to disable Core Isolation anymore!
    - Black logon screen due to Winlogon.exe crash during sleep. Does not happen anymore!
 
-2. All Drivers and apps provided by ASUS. Especially, the AMD default driver, without Adrenalin application. This way, no AMD Streaming sound driver gets installed. This AMD streaming driver is a huge root cause of sound and laptop unstabilities. No need to change anything then on Realtek and nVidia drivers anymore!
+2. All Drivers and apps provided by ASUS. Especially, the AMD default driver, without Adrenalin application. Or at least (TBC), Adrenalin "ONLY DRIVER" installation, NOT FULL INSTALLATION (minimal install to be checked). This way, no AMD Streaming sound driver gets installed. This AMD streaming driver is a huge root cause of sound and laptop unstabilities. No need to change anything then on Realtek and nVidia drivers anymore!
 
 3. Exception, use G-Helper instead of Armoury Crate
 
@@ -15,7 +15,7 @@ Apart from enabling:
 - Fast Startup,
 - Show option 'Hibernation timeouts' in Advanced Power Settings
 
-Currently under test, but only 2 registry settings are still set, more testing will tell if they are still necessary  
+Currently under test, but only 3 registry settings are still set, more testing will tell if they are still necessary  
 
 Possibly works on other models from the same brand or product range too
 ## Introduction
@@ -89,8 +89,8 @@ But can be another one if other Legacy Power Schemes are in use
 | device | driver or software version |
 |-------| -------|
 |Mediatek Bluetooth| 1.1037.2.433 no random reboots seen due to Bluetooth LE devices use|
-|AMD Graphics |31.0.14038.8002 without Adrenalin software app |
-|nVidia Graphics and HDA sound | Graphics: 536.45 Official Asus version, more stable including HD audio: 1.3.40.14 |
+|AMD Graphics |31.0.14038.8002 without Adrenalin software app. TBC if Adrenalin Only Driver or Minimal installation can be used. Full Installation MUST NOT be used|
+|nVidia Graphics and HDA sound | Graphics: 536.45 Official Asus version, more stable including HD audio: 1.3.40.14. Newer versions TBC but should be fine |
 |G-Helper| 0.187.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID 381b4222-f694-41f0-9685-ff5bb260df2e|
@@ -107,6 +107,7 @@ But can be another one if other Legacy Power Schemes are in use
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
 |Policy for devices powering down while the system is running|HKLM\...\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex (dword) |0|1|
 |Disable networking in standby|HKLM\...\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex (dword) |1|0|
+|Disconnected mode to "Aggressive"|HKLM\...\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex and DCSettingIndex (dword) |0|1|
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
