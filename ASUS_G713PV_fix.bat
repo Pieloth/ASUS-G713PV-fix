@@ -21,9 +21,9 @@ echo [38;5;247m@@@@@@@@@@@@@@@@@@@@@@@@@@@@@[38;5;203m(([38;5;247m@@@@@@@@@@
 echo [38;5;248m@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 echo [38;5;249m@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 echo:
-echo                    [91m]]] Install parameters for ASUS G713PV [[[[0m
+echo                  [91m]]] Configure parameters for ASUS G713PV [[[[0m
 echo:
-echo This installer sets up some parameters and registries to best stabilize this laptop
+echo This app sets up some parameters and registries to best stabilize this laptop
 echo: 
 echo Use also G Helper instead of Armoury Crate for even better stability ([91mhttps://github.com/seerge/g-helper/releases[0m)
 echo:
@@ -71,7 +71,7 @@ if defined rollback (set modeStby=0) else (set modeStby=1)
 if defined rollback (set PwrIdleState=03000000) else (set PwrIdleState=00000000)
 if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
 if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
-if defined rollback (set RB=ROLLBACK:) else (set RB=EXECUTE:)
+if defined rollback (set RBEX=ROLLBACK:) else (set RBEX=EXECUTE:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
 :: Get admin status
@@ -85,71 +85,84 @@ if not defined quiet %pausecls%
 
 :: 1 - Hibernation, Fast Startup enable and setup
 :: set Fast Startup ON
-set "Step=1.1/ %RB% (Re)-Activate Fast Startup, possible and safe if power down policy is changed also (see later)"
+set "Step=1.1/ %RBEX% (Re)-Activate Fast Startup, possible and safe if power down policy is changed also (see later)"
 call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "reg_dword" %FastStart% 
-:: show hibernate after options 
-set "Step=1.2/ %RB% Add option 'Hibernation timeout' into legacy Power Settings advanced options for easy 'Hibernate after' setting"
+:: show "hibernate after" option in the Legacy "Advanced Power Settings"
+set "Step=1.2/ %RBEX% Add option 'Hibernation timeout' into legacy Power Settings advanced options for easy 'Hibernate after' setting. Set also there the desired value in minutes"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" %HibGUI%
 :: Enable/disable hibernation. Rollback will disable also 1.1 and 1.2
-echo [93m1.3/ %RB% Enable Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
+echo [93m1.3/ %RBEX% Enable Hibernation and Fast Startup : Sleep S0, Hibernation, and Fast Startup will be available[0m
 if not defined admin (
-	echo [31mNO CHANGE performed. [0m
+	echo [31mNO CHANGE performed in non Admin privilege[0m
 	goto :curpwr
 )
-call :QueryAction "%RB% Enable Hibernation/Fast Startup? (Y/n)"
+call :QueryAction "%RBEX% Enable Hibernation and Fast Startup? (Y/n)"
 if %errorlevel% equ 0 powercfg /h %hibernate%
+if %errorlevel% equ 1 echo [31mSkipped, NO CHANGE performed. [0m
 
 :curpwr
+echo:
 echo Current Power configuration is now:
 powercfg /a | findstr /v "^$"
 if not defined quiet %pausecls%
 
 :: 2 - Set Ask for sign in to "Always " after leaving. This fixes Fast flickers and Winlogon.exe crash while sleep and black logon screen/lost nVidia icons
-set "Step=2/ %RB% Set sign in timeout after leaving to Always to fix black logon screen and flickers (99.99%%)"
+set "Step=2/ %RBEX% Set: 'Ask for sign in after leaving' timeout to 'Always' , to fix black logon screen and flickers"
 call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterval" "REG_DWORD" %signInTimeout%
 
 :: 3 - Tweak Disconnected Standby behavior, avoid crashs, and faster DRIPS
 :: Important Power Management registry key, as some device driver seems not to handle properly "Performance" idle mode, leading to laptop crash
-set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
+set "Step=3.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
-set "Step=3.2/ %RB% Networking connectivity in Standby: Disable for AC. Connectivity in DC stays managed by Windows"
+set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
 :: RECOMMENDED: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
-set "Step=3.3a and 3.3b/ %RB% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
+set "Step=3.3a and 3.3b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
 :: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
-set "Step=4.1/ %RB% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
+set "Step=4.1/ %RBEX% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 :: Uncomment lines if still sound issues after sleep
-::set "Step=4.1a and 4.1b/ %RB% Disable Idle Time AC and DC for nVidia HDA driver"
+::set "Step=4.1a and 4.1b/ %RBEX% Disable Idle Time AC and DC for nVidia HDA driver"
 ::call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
 ::call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-set "Step=4.2/ %RB% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
+set "Step=4.2/ %RBEX% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
 call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=4.3/ %RB% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
+set "Step=4.3/ %RBEX% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 :: Uncomment lines if still sound issues after sleep
-::set "Step=4.3a and 4.3b/ %RB% Disable Idle Time AC and DC for AMD Streaming Audio driver"
+::set "Step=4.3a and 4.3b/ %RBEX% Disable Idle Time AC and DC for AMD Streaming Audio driver"
 ::call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
 ::call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 
-if defined quiet goto :eof
-if not defined admin goto :eof
+if not defined admin (
+	echo:
+	echo [7m[91m    ---   Rerun this script in Admin mode to be able to set all these parameters   ---   [0m
+	echo:
+	if not defined quiet %pausecls%
+	goto :eof
+)
+
+if defined quiet (
+	echo ]]]  Now, [6m[91mPlease REBOOT MANUALLY computer [0mto apply changes and parameters!
+	timeout /t 10 /nobreak
+	goto :eof
+)
+
+set "Trbt=15"
 echo:
 echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!
 echo:
-call :QueryAction "Do you want to reboot computer in 30 seconds? (Y/n): "
-if %errorlevel% equ 0 call :DoShutdown
+call :QueryAction "Do you want to reboot computer in %Trbt% seconds? (Y/n): "
+if %errorlevel% equ 0 (
+	echo shutdown in %Trbt% seconds. ]]] SAVE ALL OPENED DOCUMENTS [[[
+	shutdown /r /t %Trbt%
+	timeout /t %Trbt% /nobreak
+)
 goto :eof
-
-:DoShutdown
-echo shutdown in 15 seconds. ]]] SAVE ALL OPENED DOCUMENTS [[[
-shutdown /r /t 15
-timeout /t 15 /nobreak
-exit /b
 
 :QueryAction
 if defined quiet exit /b 0
