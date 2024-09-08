@@ -13,12 +13,12 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 
 |Issues on G713PV |  Comments |
 |-------|-----|
-|Laptop screen Fast Flickers and overall stability |Fixed with: Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?". Core Isolation and security can be fully enabled as per default Windows 11 setting|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with same Fast Flickers fix!|
+|Laptop screen Fast Flickers and overall stability |Fixed with: Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?". </br> Core Isolation and security can be fully enabled as per default Windows 11 setting</br>You have to sign in each time, but "Never" might work too|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with same Fast Flickers setting|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
-|Laptop crash/freeze on Wake up from Modern Standby|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
+|Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|No new event |
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|AMD HD audio and nVidia HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop|
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|For AMD Adrenalin install, REMOVE the AMD Streaming audio driver if possible. </br>nVidia, Realtek HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop. Also for AMD Streaming driver if still present|
 |Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
 
 ## Hints with Microsoft Modern Standby
@@ -41,21 +41,19 @@ Did set it to 3 hours like former legacy default Windows settings.
 
 ## Prerequisites on Modern Standby and Legacy Power Schemes to use this script
 > [!IMPORTANT]
-> Modern Standby should be ENABLED!
+> A good [White paper here](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf) to understand all subtilities of Modern Standby
+> 
+> The intent her is to have Modern Standby ENABLED
 >
-> If previously disabled, better to re-enable it. It can be used now along with Hibernation 
+> In case previously disabled, better to re-enable it. It can be used now along with Hibernation 
 
 All tweaks are applied to the **current Windows 11 Power Scheme** in use.
 
-Normally, if Modern Standby is enabled, there should be only 1 legacy Power Scheme left: **Balanced**
+Normally, if Modern Standby is enabled, there should be only 1 legacy Power Scheme left: **Balanced** (not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, in Windows 11 settings).
 
-Not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, in Windows 11 settings.
+Current Legacy Power Scheme in use can be displayed with admin command line: `powercfg /L` . The GUID with the star at end of line is the one currently active
 
-Current Legacy Power Scheme in use can be checked with admin command line: `powercfg /L` 
-
-Script detects and use the GUID for the active Power Scheme, normally balanced.
-
-Balanced power scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e
+Script detects and uses the GUID for the active Power Scheme, normally it is: "Balanced", with Power scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e
 
 But can be another one if other Legacy Power Schemes are in use
 
@@ -71,14 +69,14 @@ Software configuration used for set up and tests:
 | device | driver or software version |
 |-------| -------|
 |Mediatek Bluetooth| 1.1037.2.433 no random reboots seen due to Bluetooth LE devices use|
-|AMD Graphics | AMD Adrenalin 24.5.1 and above|
-|nVidia Graphics and HDA sound | Graphics: 536.45 (Official Asus version, more stable)  and 555.85 (works Ok, but sometimes less stable) - HD audio: 1.3.40.14 and 1.4.0.1 |
-|G-Helper| 0.176.0 and later|
+|AMD Graphics |ASUS stock AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers|
+|nVidia Graphics and HDA sound | Graphics: 536.45 (Stock Asus version, stable) or recent ones (works Ok, but sometimes less stable)</br>HD audio: 1.3.40.14 and 1.4.0.1 |
+|G-Helper| 0.187.0 and later|
 |Modern Standby| ! ENABLED !|
-|Legacy Power Scheme| Balanced mode, with GUID 381b4222-f694-41f0-9685-ff5bb260df2e|
+|Legacy Power Scheme| Balanced mode, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e|
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
 |Armoury Crate| Not tested |
-| Windows version | Tested with latest French Windows 11 version|
+| Windows version | Tests done with latest French Windows 11 version|
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
 > Settings performed for nVidia HDA, Realtek HDA and for AMD Streaming Audio drivers need to be applied again each time these drivers are reinstalled, along with Adrenalin suite
@@ -92,22 +90,25 @@ Software configuration used for set up and tests:
 |Enable Fast Startup|HKLM\...\Session Manager\Power > HiberbootEnabled (dword)|0 or 1|1|
 |Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\...\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
-|Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\...\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
+|Set: "If you’ve been away, when should Windows require you to sign in again?" option and select "Always"|HKCU\Control Panel\Desktop > DelayLockInterval (dword)|900|0|
 |Policy for devices powering down while the system is running|HKLM\...\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex (dword) |0|1|
 |Disable networking in standby|HKLM\...\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex (dword) |1|0|
+|Modern Standby Disconnected mode set to "Aggressive" instead of "Normal"|HKLM\...\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\ "Power Scheme GUID" > ACSettingIndex and DCSettingIndex (dword) |0|1|
 |Idle Power state D0 for nVidia HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "nVidia audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
-|Idle Power state D0 for AMD streaming driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "AMD audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
 |Idle Power state D0 for Realtek HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "Realtek audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
+|Idle Power state D0 for AMD streaming driver, if present|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "AMD audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
+> [!NOTE]
+> If a device is not detected, the script will not perform any action, and will skip the tweak
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
 
 > [!IMPORTANT]
-> Better to apply all tweaks alltogether at first and see how it goes. Then possible to rollback some to see effects, after several days of observation
+> Better to apply all tweaks alltogether at first and see how it goes. Then possible to rollback individualy each one to see effect, after several days of observation
 >
-> Some of the issues get solved only with several of these tweaks
+> Some issues require several tweaks altogether 
 
-No particular impact on performances noted 
+No particular impact on performances noted, as it concerns only Idle and Sleep states. No interaction so far when drivers and devices are in use
 
 ## How to run script
 > [!NOTE]
@@ -125,47 +126,15 @@ No particular impact on performances noted
 
 2. **with admin level:**
 
-   The script will show actions as in 1. and perform the changes.
+   The script will show actions as in 1. and show each individual change, and ask for each one to apply or not. Enter Y or N, or simply Return for Y
 
    A laptop reboot is proposed at the end.
 
-3. **Command line options**
+   In cas a Registry key is not found, for any reason, no action will be performed, just skipped.
+
+4. **Command line options**
 
    Following command line options are available
 
-   - /Q  : to run quiet. All actions are performed without pause, and logged into the script terminal window
-   - /R  : Rollback procedure, to retreive default Windows 11 parameters
-
-## Known issues - To be digged further
-1. USB ports. Changing USB ports while in sleep mode or hibernation may lead to issues/freeze on next power up and sleep. To be analyzed further, but more or less known issue Fast Startup with USB... Best practice is to change USBs with laptop running, or reboot if done while sleeping.
-2. Windows Orchestrator. Rarely, may hang, and will not let laptop sleep at all 
-Situation can be checked in a Terminal admin console, with command: `powercfg /requests` 
-Anything showing there in a section means Windows will not yet allow laptop to sleep. Simply exiting Standby, or session Logoff/Logon, solves issue.
-Note this issue has been seen only once 
-
-# XML file: ASUS_G713PV_Event1002_Winlogon_crash.xml
-
-## Purpose
-
-
-When using the Windows spotlight images on logon screen
-
-Sometimes, the logon screen does not show image, just black screen, user logo and password prompt
-
-After loging in, the nVidia and AMD icons in taskbar are gone. This XML files is to be imported into Windows Task Scheduler, it will create a scheduled task, that will detect Winlogon crash (event 1002), and will restart the nVidia and AMD icons
-
-> [!WARNING]
-> This black screen due to Winlogon.exe crash during sleep and userinit.exe restart is due to some Windows 11 Authentification and device lock misbehavior while sleeping, and with Updates done at the same time.
->
-> The easiest way to get rid and workaround this is to set the option "Device lock and ask for password" timeout to "Always" or "Never" in Windows Settings/Account/Connexion options.
-> By default, it is set to 15 mn, so that lock can happen after sleep has started.
-> 
-> Registry options to disable Wakeup Password with Modern Standby: HKEY_CURRENT_USER\Control Panel\Desktop 32-bit DWORD value DelayLockInterval set to 0
-
-## How to use
-
-1. Start the Windows task scheduler
-
-2. Select Action / Import. Choose the "ASUS G713PV Event 1002 crash explorer.xml" file.
-
-3. You can review the Schedule task wizard, then choose OK. The Schedule task is ready to run
+   - /Q  : to run quiet. All actions are performed without pause, and logged into the script terminal window. Output redirection to a log file is possible
+   - /R  : Rollback procedure, to retreive default Windows 11 parameters. Same as normal mode, each tweak can be individually rollbacked
