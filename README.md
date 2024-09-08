@@ -13,13 +13,13 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 
 |Issues on G713PV |  Comments |
 |-------|-----|
-|Laptop screen fast flickers and overall stability |Core Isolation OFF still needed for fast flickers and overall drivers stability|
+|Laptop screen Fast Flickers and overall stability |Fixed with: Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?". Core Isolation and security can be fully enabled as per default Windows 11 setting|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with same Fast Flickers fix!|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|With Power Settings registry tweaks: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|No new event |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|AMD HD audio and nVidia HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop|
 |Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Event happens sometimes while Windows updates are performed during sleep and if device lock ask for password is set to other than "always" or "never" in Windows settings!|
 
 ## Hints with Microsoft Modern Standby
 > [!WARNING]
