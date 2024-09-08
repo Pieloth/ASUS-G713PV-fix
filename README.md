@@ -22,9 +22,12 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 |Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
 
 ## Hints with Microsoft Modern Standby
+> [!NOTE]
+> A good [White paper here](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf) to understand all subtilities of Modern Standby
+
 > [!WARNING]
 > Modern Standby is not and will never be former S3 sleep. 
-
+>
 The way Microsoft wants laptops to sleep, somehow like a smartphone.
 
 Biggest difference with S3 stands in that sleep is not immediate. 
@@ -37,12 +40,10 @@ Huge step ahead: mixing Modern Standby and Hibernation now possible without free
 
 Hibernation recommended to start at least 1 hour after Modern Standby start, so that Modern Standby Orchestrator can do its duty and saves SSD lifetime too
 
-Did set it to 3 hours like former legacy default Windows settings. 
+Did set it to 2 hours, similar to former legacy default Windows settings. 
 
 ## Prerequisites on Modern Standby and Legacy Power Schemes to use this script
 > [!IMPORTANT]
-> A good [White paper here](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf) to understand all subtilities of Modern Standby
-> 
 > The intent her is to have Modern Standby ENABLED
 >
 > In case previously disabled, better to re-enable it. It can be used now along with Hibernation 
