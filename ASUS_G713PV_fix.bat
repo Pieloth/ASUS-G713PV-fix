@@ -61,10 +61,13 @@ set nVidiaHDA=%nVidiaHDA: =%
 set Realtek=%Realtek: =%
 set AMDstreaming=%AMDstreaming: =%
 
+if defined rollback (set FastStart=0) else (set FastStart=1)
+if defined rollback (set HibGUI=1) else (set HibGUI=2)
 if defined rollback (set hibernate=off) else (set hibernate=on)
-if defined rollback (set coreisolation=1) else (set coreisolation=0)
+if defined rollback (set signInTimeout=0x384) else (set signInTimeout=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
+if defined rollback (set modeStby=0) else (set modeStby=1)
 if defined rollback (set PwrIdleState=03000000) else (set PwrIdleState=00000000)
 if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
 if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
@@ -80,60 +83,81 @@ if exist %windir%\system32\config\systemprofile\* (
 )
 if not defined quiet %pausecls%
 
-:: 1 - Hibernation enable and setup
-:: set Fast Startup ON (not rollbacked)
-set "Step=1.1/ (Re)-Activate Fast Startup"
-call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "REG_DWORD" 1 
-:: show hibernate after options (not rollbacked)
-set "Step=1.2/ Add option 'Hibernation timeout' into legacy Power Settings advanced options"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" 2
+:: 1 - Hibernation, Fast Startup enable and setup
+:: set Fast Startup ON
+set "Step=1.1/ %RB% (Re)-Activate Fast Startup, possible and safe if power down policy is changed also (see later)"
+call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "reg_dword" %FastStart% 
+:: show hibernate after options 
+set "Step=1.2/ %RB% Add option 'Hibernation timeout' into legacy Power Settings advanced options for easy 'Hibernate after' setting"
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" %HibGUI%
 :: Enable/disable hibernation. Rollback will disable also 1.1 and 1.2
 echo [93m1.3/ %RB% Enable Hibernation/Fast Startup : Sleep S0, hibernation, and Fast Startup will be available[0m
-powercfg /h %hibernate%
-if not defined admin echo [31mNO CHANGE performed. Current Power configuration is:[0m
+if not defined admin (
+	echo [31mNO CHANGE performed. [0m
+	goto :curpwr
+)
+call :QueryAction "%RB% Enable Hibernation/Fast Startup? (Y/n)"
+if %errorlevel% equ 0 powercfg /h %hibernate%
+
+:curpwr
+echo Current Power configuration is now:
 powercfg /a | findstr /v "^$"
 if not defined quiet %pausecls%
 
-:: 2 - Disable Core Isolation
-set "Step=2/ %RB% Disable Core Isolation. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
-call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
+:: 2 - Set Ask for sign in to "Always " after leaving. This fixes Fast flickers and Winlogon.exe crash while sleep and black logon screen/lost nVidia icons
+set "Step=2/ %RB% Set sign in timeout after leaving to Always to fix black logon screen and flickers (99.99%%)"
+call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterval" "REG_DWORD" %signInTimeout%
 
-:: 3 - Set important Power Management registry keys
-set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC)"
+:: 3 - Tweak Disconnected Standby behavior, avoid crashs, and faster DRIPS
+:: Important Power Management registry key, as some device driver seems not to handle properly "Performance" idle mode, leading to laptop crash
+set "Step=3.1/ %RB% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
-:: STRONGLY RECOMMENDED: Disable networking in standby in AC and/or DC for more quiet Modern Standby sleep!
-set "Step=3.2/ %RB% Networking connectivity in Standby (Disable networking in Standby for AC.)"
+:: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
+set "Step=3.2/ %RB% Networking connectivity in Standby: Disable for AC. Connectivity in DC stays managed by Windows"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
+:: RECOMMENDED: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
+set "Step=3.3a and 3.3b/ %RB% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
 :: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
-set "Step=4.1/ %RB% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=4.2 and 4.3/ %RB% Disable Idle Time AC and DC for AMD Streaming Audio driver"
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
-set "Step=5.1/ %RB% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
+set "Step=4.1/ %RB% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=5.2 and 5.3/ %RB% Disable Idle Time AC and DC for nVidia HDA driver"
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-set "Step=6/ %RB% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
+:: Uncomment lines if still sound issues after sleep
+::set "Step=4.1a and 4.1b/ %RB% Disable Idle Time AC and DC for nVidia HDA driver"
+::call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
+::call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
+set "Step=4.2/ %RB% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
 call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+set "Step=4.3/ %RB% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+:: Uncomment lines if still sound issues after sleep
+::set "Step=4.3a and 4.3b/ %RB% Disable Idle Time AC and DC for AMD Streaming Audio driver"
+::call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
+::call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 
 if defined quiet goto :eof
 if not defined admin goto :eof
 echo:
 echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!
 echo:
-set /p continue="Do you want to reboot computer in 30 seconds? (Y/n): "
-if /I "%continue%" == "y" call :DoShutdown
-if /I "%continue%" == "" call :DoShutdown
+call :QueryAction "Do you want to reboot computer in 30 seconds? (Y/n): "
+if %errorlevel% equ 0 call :DoShutdown
 goto :eof
 
 :DoShutdown
-echo shutdown in 30 seconds. ]]] CLOSE ALL DOCUMENTS [[[
-shutdown /r
-timeout /t 30
+echo shutdown in 15 seconds. ]]] SAVE ALL OPENED DOCUMENTS [[[
+shutdown /r /t 15
+timeout /t 15 /nobreak
 exit /b
+
+:QueryAction
+if defined quiet exit /b 0
+set Qaction=
+set /p Qaction=%1
+if /I "%Qaction%" == "y" exit /b 0
+if /I "%Qaction%" == "" exit /b 0
+exit /b 1
 
 :ProcessKey   - Processes the current registry key
 ::cls
@@ -143,30 +167,41 @@ echo [34mCurrent Registry key BEFORE change:[0m
 if "%3" NEQ "" ( reg query %2 /v %3 /t %4 
 ) else ( reg query %2 /f "*" /k )
 if errorlevel 1 (
-	echo [91mDID NOT FIND KEY %2 value %3 type %4
-	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS KEY[0m
+	echo [91mWARNING:
+	echo DID NOT FIND THE REGISTRY KEY FOR THIS DEVICE, THIS DEVICE OR DRIVER MIGHT NOT BE PRESENT.
+	echo NOTHING WILL BE DONE FOR THIS ONE, SKIPPED.
+	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS KEY AND DEVICE[0m
 	goto :EndProcessKey
 )
 echo:
-echo [36mRegistry key CHANGE STATUS:[0m
-if not defined admin (
-	echo [31mNO CHANGE performed[0m
-) else (
-	if "%1" == "add" reg %1 %2 /v %3 /t %4 /d %5 /f
-	if "%1" == "delete" reg %1 %2 /f
-)
+echo [35mRegistry key TARGET change:[0m
+echo %1:
+echo %2  
+echo       %3    %4    %5[0m
 
 echo:
-if defined admin (
-	echo [35mRegistry key AFTER change:[0m
-	if "%3" NEQ "" ( reg query %2 /v %3 /t %4 
-	) else ( reg query %2 /f "*" /k )
-) else (
-	echo [35mRegistry key TARGET change:[0m
-	echo %1:
-	echo %2  
-	echo       %3    %4    %5[0m
+echo [36mRegistry key CHANGE STATUS:[0m
+if not defined admin (
+	echo [31mNO CHANGE performed in non admin privilege[0m
+	goto :EndProcessKey
 )
+
+call :QueryAction "Confirm apply this setting? (Y/n): "
+if %errorlevel% equ 0 goto :DoSetting
+echo [31mSkipped, NO CHANGE performed[0m
+goto :EndProcessKey
+
+:DoSetting
+if "%1" == "add" reg %1 %2 /v %3 /t %4 /d %5 /f
+if "%1" == "delete" reg %1 %2 /f
+echo:
+echo [32mRegistry key AFTER change:[0m
+if "%3" NEQ "" ( 
+	reg query %2 /v %3 /t %4 
+) else ( 
+	reg query %2 /f "*" /k 
+)
+
 :EndProcessKey
 echo:
 if not defined quiet %pausecls%
