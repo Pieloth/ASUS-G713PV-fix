@@ -45,6 +45,9 @@ for /f "delims=" %%i in ('powercfg /q') do set actpowplan=%%i & goto :EndGUID
 :EndGUID
 for /f "tokens=2 delims=:" %%i in ("%actpowplan%") do set actpowplan1=%%i
 for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
+:: Probably wrong assumption. Boot will always use default Local Machine balanced GUID, before session is opened and active power scheme modified. 
+:: So force default GUID here 
+set "actpowplanguid=381b4222-f694-41f0-9685-ff5bb260df2e"
 
 set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
 
@@ -125,10 +128,9 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50
 :: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
 set "Step=4.1/ %RBEX% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-:: Uncomment lines if still sound issues after sleep
-::set "Step=4.1a and 4.1b/ %RBEX% Disable Idle Time AC and DC for nVidia HDA driver"
-::call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-::call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
+set "Step=4.1a and 4.1b/ %RBEX% Disable Idle Time AC and DC for nVidia HDA driver"
+call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
+call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
 set "Step=4.2/ %RBEX% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
 call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 set "Step=4.3/ %RBEX% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
@@ -200,11 +202,11 @@ if not defined admin (
 )
 
 call :QueryAction "Confirm apply this setting? (Y/n): "
-if %errorlevel% equ 0 goto :DoSetting
-echo [31mSkipped, NO CHANGE performed[0m
-goto :EndProcessKey
+if %errorlevel% neq 0 (
+	echo [31mSkipped, NO CHANGE performed[0m
+	goto :EndProcessKey
+)
 
-:DoSetting
 if "%1" == "add" reg %1 %2 /v %3 /t %4 /d %5 /f
 if "%1" == "delete" reg %1 %2 /f
 echo:
