@@ -48,21 +48,16 @@ Did set it to 2 hours, similar to former legacy default Windows settings.
 >
 > In case previously disabled, better to re-enable it. It can be used now along with Hibernation 
 
-All tweaks are applied to the **current Windows 11 Power Scheme** in use.
+All tweaks are applied to the **Default Windows 11 Power Scheme, Balanced, defined in Registry for Local Machine**
 
 Normally, if Modern Standby is enabled, there should be only 1 legacy Power Scheme left: **Balanced** (not talking here about the 3 Windows 11 Modern Power Plans: Power saving, normal, performance, in Windows 11 settings).
 
 Current Legacy Power Scheme in use can be displayed with admin command line: `powercfg /L` . The GUID with the star at end of line is the one currently active
 
-Script detects and uses the GUID for the active Power Scheme, normally it is: "Balanced", with Power scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e
-
-But can be another one if other Legacy Power Schemes are in use
+Script uses the GUID for the default Balanced Power Scheme, with Power scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e
 
 > [!WARNING]
-> Script currently will not work for custom Power Schemes. Only default ones can be used.
-
-> [!TIP]
-> To retreive GUID, script uses the semicolon ":" character. Should be Ok for any Windows language version, but yet to be confirmed 
+> Script currently will not work for other Power Schemes, default one is used. But this can be modified in the script if needed for specific configurations
 
 ## Software configuration used
 Software configuration used for set up and tests:
