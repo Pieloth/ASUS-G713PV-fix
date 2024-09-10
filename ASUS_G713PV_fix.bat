@@ -75,7 +75,7 @@ if defined rollback (set PwrIdleState=03000000) else (set PwrIdleState=00000000)
 if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
 if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
 if defined rollback (set RBEX=ROLLBACK:) else (set RBEX=EXECUTE:)
-if defined rollback echo [6m[91mROLLBACK PROCEDURE TO DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
+if defined rollback echo [6m[91mROLLBACK PROCEDURE TO WINDOWS 11 DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
 :: Get admin status
 if exist %windir%\system32\config\systemprofile\* (
@@ -135,7 +135,7 @@ set "Step=4.2/ %RBEX% Force Idle Power State to D0 in AC and DC for Realtek Audi
 call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 set "Step=4.3/ %RBEX% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-:: Uncomment lines if still sound issues after sleep
+:: Uncomment 3 next lines if AMD Streaming Audio driver is installed, and sound issues happen
 ::set "Step=4.3a and 4.3b/ %RBEX% Disable Idle Time AC and DC for AMD Streaming Audio driver"
 ::call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
 ::call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
@@ -183,9 +183,9 @@ if "%3" NEQ "" ( reg query %2 /v %3 /t %4
 ) else ( reg query %2 /f "*" /k )
 if errorlevel 1 (
 	echo [91mWARNING:
-	echo DID NOT FIND THE REGISTRY KEY FOR THIS DEVICE, THIS DEVICE OR DRIVER MIGHT NOT BE PRESENT.
-	echo NOTHING WILL BE DONE FOR THIS ONE, SKIPPED.
-	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS KEY AND DEVICE[0m
+	echo DID NOT FIND THE CORRESPONDING REGISTRY KEY.
+	echo THIS ACTION WILL BE SKIPPED, NOTHING WILL BE CHANGED.
+	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS REGISTRY KEY[0m
 	goto :EndProcessKey
 )
 echo:
