@@ -45,24 +45,31 @@ for /f "delims=" %%i in ('powercfg /q') do set actpowplan=%%i & goto :EndGUID
 :EndGUID
 for /f "tokens=2 delims=:" %%i in ("%actpowplan%") do set actpowplan1=%%i
 for /f "tokens=1" %%i in ("%actpowplan1%") do set actpowplanguid=%%i
-:: Probably wrong assumption. Boot will always use default Local Machine balanced GUID, before session is opened and active power scheme modified. 
-:: So force default GUID here 
+
+:: Wrong assumption: Windows 11 will boot with default balanced power scheme parameters, whatever session active power scheme
 set "actpowplanguid=381b4222-f694-41f0-9685-ff5bb260df2e"
 
 set "RegKeyHeader=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control"
+set "RegKeyClassMediaHeader=%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}"
+set "RegKeyPowerSettingsHeader=%RegKeyHeader%\Power\PowerSettings"
 
 :: Retreive Media classes that need power Idle Time adjustment.
 :: See https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/audio-device-class-inactivity-timer-implementation
-for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "NVIDIA*Audio"') do set nVidiaHDA=%%j & goto :EndnVidiaHDA
-:EndnVidiaHDA
-for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "Realtek*Audio"') do set Realtek=%%j & goto :EndRealtek
-:EndRealtek
-for /f "delims=" %%j in ('reg query "%RegKeyHeader%\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}" /s /f "AMD Streaming Audio"') do set AMDstreaming=%%j & goto :EndAMDstreaming
-:EndAMDstreaming
+for /f "delims=" %%j in ('reg query "%RegKeyClassMediaHeader%" /s /f "NVIDIA*Audio"') do set nVidiaHDAClassMedia=%%j & goto :EndnVidiaHDAClassMedia
+:EndnVidiaHDAClassMedia
+for /f "delims=" %%j in ('reg query "%RegKeyClassMediaHeader%" /s /f "Realtek*Audio"') do set RealtekClassMedia=%%j & goto :EndRealtekClassMedia
+:EndRealtekClassMedia
+for /f "delims=" %%j in ('reg query "%RegKeyClassMediaHeader%" /s /f "AMD Streaming Audio"') do set AMDstreamingClassMedia=%%j & goto :EndAMDstreamingClassMedia
+:EndAMDstreamingClassMedia
+
 :: Remove spaces in strings
-set nVidiaHDA=%nVidiaHDA: =%
-set Realtek=%Realtek: =%
-set AMDstreaming=%AMDstreaming: =%
+set nVidiaHDAClassMedia=%nVidiaHDAClassMedia: =%
+set RealtekClassMedia=%RealtekClassMedia: =%
+set AMDstreamingClassMedia=%AMDstreamingClassMedia: =%
+:: Check for error in case device does not exist to configure only existing devices
+set ErrNV=0 & if "x%nVidiaHDAClassMedia:HKEY_LOCAL_MACHINE=%"=="x%nVidiaHDAClassMedia%" set ErrNV=1
+set ErrRtk=0 & if "x%RealtekClassMedia:HKEY_LOCAL_MACHINE=%" == "x%RealtekClassMedia%" set ErrRtk=1 
+set ErrAMD=0 & if "x%AMDstreamingClassMedia:HKEY_LOCAL_MACHINE=%" == "x%AMDstreamingClassMedia%" set ErrAMD=1 
 
 if defined rollback (set FastStart=0) else (set FastStart=1)
 if defined rollback (set HibGUI=1) else (set HibGUI=2)
@@ -92,7 +99,7 @@ set "Step=1.1/ %RBEX% (Re)-Activate Fast Startup, possible and safe if power dow
 call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "reg_dword" %FastStart% 
 :: show "hibernate after" option in the Legacy "Advanced Power Settings"
 set "Step=1.2/ %RBEX% Add option 'Hibernation timeout' into legacy Power Settings advanced options for easy 'Hibernate after' setting. Set also there the desired value in minutes"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" %HibGUI%
+call :ProcessKey add "%RegKeyPowerSettingsHeader%\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" %HibGUI%
 :: Enable/disable hibernation. Rollback will disable also 1.1 and 1.2
 echo [93m1.3/ %RBEX% Enable Hibernation and Fast Startup : Sleep S0, Hibernation, and Fast Startup will be available[0m
 if not defined admin (
@@ -116,29 +123,29 @@ call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterva
 :: 3 - Tweak Disconnected Standby behavior, avoid crashs, and faster DRIPS
 :: Important Power Management registry key, as some device driver seems not to handle properly "Performance" idle mode, leading to laptop crash
 set "Step=3.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
+call :ProcessKey add "%RegKeyPowerSettingsHeader%\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
 set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
+call :ProcessKey add "%RegKeyPowerSettingsHeader%\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
 :: RECOMMENDED: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
 set "Step=3.3a and 3.3b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
+call :ProcessKey add "%RegKeyPowerSettingsHeader%\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
+call :ProcessKey add "%RegKeyPowerSettingsHeader%\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
 :: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
 set "Step=4.1/ %RBEX% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+if %ErrNV% equ 0 call :ProcessKey add "%nVidiaHDAClassMedia%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 set "Step=4.1a and 4.1b/ %RBEX% Disable Idle Time AC and DC for nVidia HDA driver"
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
-call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
+if %ErrNV% equ 0 call :ProcessKey add "%nVidiaHDAClassMedia%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
+if %ErrNV% equ 0 call :ProcessKey add "%nVidiaHDAClassMedia%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
 set "Step=4.2/ %RBEX% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
-call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+if %ErrRtk% equ 0 call :ProcessKey add "%RealtekClassMedia%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 set "Step=4.3/ %RBEX% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
-call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
+if %ErrAMD% equ 0 call :ProcessKey add "%AMDstreamingClassMedia%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 :: Uncomment lines if still sound issues after sleep
 ::set "Step=4.3a and 4.3b/ %RBEX% Disable Idle Time AC and DC for AMD Streaming Audio driver"
-::call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
-::call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
+::call :ProcessKey add "%AMDstreamingClassMedia%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
+::call :ProcessKey add "%AMDstreamingClassMedia%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 
 if not defined admin (
 	echo:
