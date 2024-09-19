@@ -18,7 +18,7 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running|
 |nVidia nvlddmkm.dll crash during Modern Standby|No new event |
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|For AMD Adrenalin install, REMOVE the AMD Streaming audio driver if possible. </br>nVidia, Realtek HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop. Also for AMD Streaming driver if still present|
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Main reason was Realtek driver 9590, which was installed, and not the OEM ASUS official 9549. Switching to Realtek driver 9549 did fix 99% of this issue.  </br>For AMD Adrenalin install, REMOVE the AMD Streaming audio driver if possible. </br>nVidia, Realtek HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop. Also for AMD Streaming driver if still present|
 |Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
 
 ## Hints with Microsoft Modern Standby
@@ -64,9 +64,10 @@ Software configuration used for set up and tests:
 
 | device | driver or software version |
 |-------| -------|
-|Mediatek Bluetooth| 1.1037.2.433 no random reboots seen due to Bluetooth LE devices use|
-|AMD Graphics |ASUS stock AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers|
-|nVidia Graphics and HDA sound | Graphics: 536.45 (Stock Asus version, stable) or recent ones (works Ok, but sometimes less stable)</br>HD audio: 1.3.40.14 and 1.4.0.1 |
+|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver is NOT ADVISED, as it may create conflicts with nVidia audio| 
+|Mediatek Bluetooth| 1.1037.2.433 ASUS driver, no random reboots seen due to Bluetooth LE devices use|
+|AMD Graphics |ASUS AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers. <br/>Note that chipset updates may mess USBs , and require reinstallation of ASUS Hotfix Firmware 2006_1E|
+|nVidia Graphics and HDA sound | Graphics: 536.45 (Asus version, stable) or recent ones (works Ok, but sometimes less stable)</br>HD audio: 1.3.40.14 and 1.4.0.1 |
 |G-Helper| 0.187.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e|
