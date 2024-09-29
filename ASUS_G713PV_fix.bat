@@ -133,8 +133,8 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
 :: Tested here with ASUS default drivers 
-:: DRIVER REALTEK 6.0.9549.1, AMD GRAPHICS 31.0.14038.8002, AMD CHIPSET 1.2.0.120, NVIDIA 31.0.15.3645 with SOUND 1.3.40.14
-:: ASMEDIA HOTFIX FIRMWARE 2006_1E AS IT APPEARS SOMETIMES IS TO BE RE-INSTALLED EACH TIME AFTER CHANGING DRIVERS ESPECIALLY CHIPSET, IF UNSTABILITY IS STILL EXPERIENCED
+:: Realtek 6.0.9549.1, AMD Graphics 31.0.14038.8002, AMD Chipset 1.2.0.120, nVidia 31.0.15.3645 with HDA sound 1.3.40.14
+:: AsMedia HOTFIX FIRMWARE 2006_1E : It appears NECESSARY to RE-INSTALL each time after CHANGING DRIVERS ESPECIALLY CHIPSET, if unstability is still seen
 
 :: Increase TdrDelay to avoid nvlddmkm crashes. A well known tweak, just google for it
 set "Step=5.0/ %RBEX% Increase default Windows 'TdrDelay' for Graphics drivers, to avoid nvlddmkm crashes. A well known but necessary tweak"
