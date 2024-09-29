@@ -67,14 +67,16 @@ set AMDstreaming=%AMDstreaming: =%
 if defined rollback (set FastStart=0) else (set FastStart=1)
 if defined rollback (set HibGUI=1) else (set HibGUI=2)
 if defined rollback (set hibernate=off) else (set hibernate=on)
+if defined rollback (set coreisolation=1) else (set coreisolation=0)
 if defined rollback (set signInTimeout=0x384) else (set signInTimeout=0)
 if defined rollback (set policypwrdn=0) else (set policypwrdn=1)
 if defined rollback (set netACstby=1) else (set netACstby=0)
 if defined rollback (set modeStby=0) else (set modeStby=1)
+if defined rollback (set TdrDelay=2) else (set TdrDelay=10)
 if defined rollback (set PwrIdleState=03000000) else (set PwrIdleState=00000000)
 if defined rollback (set nvidletime=04000000) else (set nvidletime=00000000)
 if defined rollback (set amdidletime=03000000) else (set amdidletime=00000000)
-if defined rollback (set RBEX=ROLLBACK:) else (set RBEX=EXECUTE:)
+if defined rollback (set RBEX=ROLLBACK:) else (set RBEX=SETTING:)
 if defined rollback echo [6m[91mROLLBACK PROCEDURE TO WINDOWS 11 DEFAULTS WILL BE APPLIED TO REGISTRY ENTRIES[0m
 
 :: Get admin status
@@ -99,9 +101,9 @@ if not defined admin (
 	echo [31mNO CHANGE performed in non Admin privilege[0m
 	goto :curpwr
 )
-call :QueryAction "%RBEX% Enable Hibernation and Fast Startup? (Y/n)"
-if %errorlevel% equ 0 powercfg /h %hibernate%
-if %errorlevel% equ 1 echo [31mSkipped, NO CHANGE performed. [0m
+call :QueryAction "%RBEX% Enable Hibernation and Fast Startup"
+if %errorlevel% equ 1 powercfg /h %hibernate%
+if %errorlevel% equ 2 echo [31mSkipped, NO CHANGE performed. [0m
 
 :curpwr
 echo:
@@ -109,31 +111,46 @@ echo Current Power configuration is now:
 powercfg /a | findstr /v "^$"
 if not defined quiet %pausecls%
 
-:: 2 - Set Ask for sign in to "Always " after leaving. This fixes Fast flickers and Winlogon.exe crash while sleep and black logon screen/lost nVidia icons
-set "Step=2/ %RBEX% Set: 'Ask for sign in after leaving' timeout to 'Always' , to fix black logon screen and flickers"
+:: 2 - Disable Core Isolation
+set "Step=2/ %RB% Disable Core Isolation to fix all Fast Flckers. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
+call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
+
+:: 3 - Set "Request a reconnection after your absence" to "Always " after leaving. This fixes Winlogon.exe crash while sleep and black logon screen/lost nVidia icons
+set "Step=3/ %RBEX% Set: 'Request a reconnection after your absence' timeout to 'Always' , to fix black logon screen and nVidia icons lost in tasbkar"
 call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterval" "REG_DWORD" %signInTimeout%
 
-:: 3 - Tweak Disconnected Standby behavior, avoid crashs, and faster DRIPS
-:: Important Power Management registry key, as some device driver seems not to handle properly "Performance" idle mode, leading to laptop crash
-set "Step=3.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
+:: 4 - Tweak Disconnected Standby behavior, avoid crashs, and faster DRIPS
+:: Important Power Management registry key, as some device driver seem not to handle properly timeout for idle mode, leading to laptop crash on DRIPS sleep or wake up
+:: https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-device-idle-policy
+set "Step=4.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
-set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
+::set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
+::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
 :: RECOMMENDED: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
-set "Step=3.3a and 3.3b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
-call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
+::set "Step=3.3a and 3.3b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
+::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
+::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
-:: 4 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
-set "Step=4.1/ %RBEX% Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
+:: Tested here with ASUS default drivers 
+:: DRIVER REALTEK 6.0.9549.1, AMD GRAPHICS 31.0.14038.8002, AMD CHIPSET 1.2.0.120, NVIDIA 31.0.15.3645 with SOUND 1.3.40.14
+:: ASMEDIA HOTFIX FIRMWARE 2006_1E AS IT APPEARS SOMETIMES IS TO BE RE-INSTALLED EACH TIME AFTER CHANGING DRIVERS ESPECIALLY CHIPSET, IF UNSTABILITY IS STILL EXPERIENCED
+
+:: Increase TdrDelay to avoid nvlddmkm crashes. A well known tweak, just google for it
+set "Step=5.0/ %RBEX% Increase default Windows 'TdrDelay' for Graphics drivers, to avoid nvlddmkm crashes. A well known but necessary tweak"
+call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" %TdrDelay%
+
+:: 5 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
+:: Nvidia is necessary. Realtek and AMD : Uncomment lines if necessary, in case of unstability with sound
+:: https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/portcls-registry-power-settings
+set "Step=6.1/ %RBEX% If HDMI sound issues: Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=4.1a and 4.1b/ %RBEX% Disable Idle Time AC and DC for nVidia HDA driver"
+set "Step=6.1a and 6.1b/ %RBEX% If HDMI sound issues: Disable Idle Time AC and DC for nVidia HDA driver"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-set "Step=4.2/ %RBEX% Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
+set "Step=6.2/ %RBEX% If sound issues: Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
 call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=4.3/ %RBEX% Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
+set "Step=6.3/ %RBEX% If sound issues: Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 :: Uncomment 3 next lines if AMD Streaming Audio driver is installed, and sound issues happen
 ::set "Step=4.3a and 4.3b/ %RBEX% Disable Idle Time AC and DC for AMD Streaming Audio driver"
@@ -156,10 +173,12 @@ if defined quiet (
 
 set "Trbt=15"
 echo:
-echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!
+echo ]]]  Now, [6m[91mPlease REBOOT computer [0mto apply changes and parameters!   [[[
 echo:
-call :QueryAction "Do you want to reboot computer in %Trbt% seconds? (Y/n): "
-if %errorlevel% equ 0 (
+echo [7m[91m]]]  Also, rerun the AsMedia Hotfix 2006 1E Firmware Updater, in case of Chipset driver change, or if unstability is experienced   [[[[0m
+echo:
+call :QueryAction "Do you want to reboot computer in %Trbt% seconds"
+if %errorlevel% equ 1 (
 	echo shutdown in %Trbt% seconds. ]]] SAVE ALL OPENED DOCUMENTS [[[
 	shutdown /r /t %Trbt%
 	timeout /t %Trbt% /nobreak
@@ -167,12 +186,9 @@ if %errorlevel% equ 0 (
 goto :eof
 
 :QueryAction
-if defined quiet exit /b 0
-set Qaction=
-set /p Qaction=%1
-if /I "%Qaction%" == "y" exit /b 0
-if /I "%Qaction%" == "" exit /b 0
-exit /b 1
+if defined quiet exit /b 1
+choice /c yn /m %1 
+exit /b %errorlevel
 
 :ProcessKey   - Processes the current registry key
 ::cls
@@ -201,8 +217,8 @@ if not defined admin (
 	goto :EndProcessKey
 )
 
-call :QueryAction "Confirm apply this setting? (Y/n): "
-if %errorlevel% neq 0 (
+call :QueryAction "Confirm apply this setting"
+if %errorlevel% neq 1 (
 	echo [31mSkipped, NO CHANGE performed[0m
 	goto :EndProcessKey
 )
