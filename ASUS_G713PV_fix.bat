@@ -93,7 +93,7 @@ if not defined quiet %pausecls%
 set "Step=1.1/ %RBEX% (Re)-Activate Fast Startup, possible and safe if power down policy is changed also (see later)"
 call :ProcessKey add "%RegKeyHeader%\Session Manager\Power" "HiberbootEnabled" "reg_dword" %FastStart% 
 :: show "hibernate after" option in the Legacy "Advanced Power Settings"
-set "Step=1.2/ %RBEX% Add option 'Hibernation timeout' into legacy Power Settings advanced options for easy 'Hibernate after' setting. Set also there the desired value in minutes"
+set "Step=1.2/ %RBEX% Add option 'Hibernation timeout' into legacy Power Settings advanced options &echo for easy 'Hibernate after' setting. Set also there the desired value in minutes"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364" "Attributes" "REG_DWORD" %HibGUI%
 :: Enable/disable hibernation. Rollback will disable also 1.1 and 1.2
 echo [93m1.3/ %RBEX% Enable Hibernation and Fast Startup : Sleep S0, Hibernation, and Fast Startup will be available[0m
@@ -112,17 +112,17 @@ powercfg /a | findstr /v "^$"
 if not defined quiet %pausecls%
 
 :: 2 - Disable Core Isolation
-set "Step=2/ %RB% Disable Core Isolation to fix all Fast Flckers. After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
+set "Step=2/ %RB% Disable Core Isolation to fix all Fast Flckers.&echo After reboot, clic on 'Ignore' on yellow icon in 'Windows Sécurity'"
 call :ProcessKey add "%RegKeyHeader%\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" "Enabled" "REG_DWORD" %coreisolation%
 
 :: 3 - Set "Request a reconnection after your absence" to "Always " after leaving. This fixes Winlogon.exe crash while sleep and black logon screen/lost nVidia icons
-set "Step=3/ %RBEX% Set: 'Request a reconnection after your absence' timeout to 'Always' , to fix black logon screen and nVidia icons lost in tasbkar"
+set "Step=3/ %RBEX% Set: 'Request a reconnection after your absence' timeout to 'Always' ,&echo to fix black logon screen and nVidia icons lost in tasbkar"
 call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterval" "REG_DWORD" %signInTimeout%
 
 :: 4 - Tweak Disconnected Standby behavior, avoid crashs, and faster DRIPS
 :: Important Power Management registry key, as some device driver seem not to handle properly timeout for idle mode, leading to laptop crash on DRIPS sleep or wake up
 :: https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-device-idle-policy
-set "Step=4.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC). Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
+set "Step=4.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC).&echo Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
 ::set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
@@ -137,15 +137,15 @@ call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531
 :: AsMedia HOTFIX FIRMWARE 2006_1E : It appears NECESSARY to RE-INSTALL each time after CHANGING DRIVERS ESPECIALLY CHIPSET, if unstability is still seen
 
 :: Increase TdrDelay to avoid nvlddmkm crashes. A well known tweak, just google for it
-set "Step=5.0/ %RBEX% Increase default Windows 'TdrDelay' for Graphics drivers, to avoid nvlddmkm crashes. A well known but necessary tweak"
+set "Step=5.0/ %RBEX% Increase default Windows 'TdrDelay' for Graphics drivers, to avoid nvlddmkm crashes.&echo A well known but necessary tweak"
 call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" %TdrDelay%
 
 :: 5 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
 :: Nvidia is necessary. Realtek and AMD : Uncomment lines if necessary, in case of unstability with sound
 :: https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/portcls-registry-power-settings
-set "Step=6.1/ %RBEX% If HDMI sound issues: Force Idle Power State to D0 in AC and DC for nVidia HDA driver"
+set "Step=6.1/ %RBEX% If HDMI sound issues: Force Idle Power State to D0 in AC and DC for nVidia HDA driver.&echo         NOTE: RERUN this script if you change the nVidia driver!"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=6.1a and 6.1b/ %RBEX% If HDMI sound issues: Disable Idle Time AC and DC for nVidia HDA driver"
+set "Step=6.1a and 6.1b/ %RBEX% If HDMI sound issues: Disable Idle Time AC and DC for nVidia HDA driver.&echo         NOTE: RERUN this script if you change the nVidia driver!"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
 set "Step=6.2/ %RBEX% If sound issues: Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
