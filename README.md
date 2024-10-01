@@ -84,6 +84,9 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 >
 > Just rerun the script in such case after a driver installation.
 
+> [!CAUTION]
+> Again, REAPPLY AsMedia Hotfix Updater 2006_1E each time Chipset drivers are changed, or updated with AMD Adrenalin suite 
+
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Windows or driver value|New tweaked value|
 |:-----|:---------------------|:-----------:|:------------------------:|
 |Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\...\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
