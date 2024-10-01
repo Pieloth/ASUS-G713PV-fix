@@ -13,7 +13,7 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 
 |Issues on G713PV |  Comments |
 |-------|-----|
-|Laptop screen Fast Flickers and overall stability |Fixed with: Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?". </br> Core Isolation and security can be fully enabled as per default Windows 11 setting, but 100% Flicker Free is obtained after disabling Core Isolation.</br>You have to sign in each time, but "Never" might work too|
+|Laptop screen Fast Flickers and overall stability |Fixed with: Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?".</br>You have to sign in each time, but "Never" might work too. </br> Core Isolation and security can be fully enabled as per default Windows 11 setting, but 100% Flicker Free is obtained after disabling Core Isolation.|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with same Fast Flickers setting|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running|
@@ -86,6 +86,7 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Windows or driver value|New tweaked value|
 |:-----|:---------------------|:-----------:|:------------------------:|
+|Disable Core Isolation| Either in Windows Security, or Registry key: HKLM\...\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity > Enabled (dword)|1| 0|
 |Enable Fast Startup|HKLM\...\Session Manager\Power > HiberbootEnabled (dword)|0 or 1|1|
 |Show option 'Hibernation timeouts' in Advanced Power Settings|HKLM\...\Power\PowerSettings\238C9FA8-0AAD-41ED-83F4-97BE242C8F20\9d7815a6-7ee4-497e-8888-515a05f02364 > Attributes (dword)| 1|2|
 |Activate Hibernation/Fast Startup|Admin command line: `powercfg /h on`| On or Off| On|
