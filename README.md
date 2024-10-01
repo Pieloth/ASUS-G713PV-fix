@@ -17,9 +17,9 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with same Fast Flickers setting|
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
 |Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running|
-|nVidia nvlddmkm.dll crash during Modern Standby|No new event |
-|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Main reason was Realtek driver 9590, which was installed, and not the OEM ASUS official 9549. Switching to Realtek driver 9549 did fix 99% of this issue.  </br>For AMD Adrenalin install, REMOVE the AMD Streaming audio driver if possible. </br>nVidia, Realtek HDA Audio Idle Power to D0 driver tweak stops messing and stabilizes whole laptop. Also for AMD Streaming driver if still present|
-|Random reboots| Seen with Bluetooth LE devices : Corsair mouse and Xbox Elite 2. No new reboot with latest Mediatek Bluetooth driver|
+|nVidia nvlddmkm.dll crash during Modern Standby|Increase TdrDelay fixes this, a common setting on dual GPU computers |
+|Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Stay with OEM ASUS official 6.0.9549.1 .  </br>For AMD Adrenalin install, remove AMD Streaming audio driver helps. </br>nVidia, Realtek HDA Audio Idle Power to D0 driver, Performance and Conservative Idlt Timeouts tweaks stops messing and stabilizes whole laptop. Also valid for AMD Streaming driver if still present|
+|Random reboots| Due to misconfiguration between Chipset drivers and AsMedia Firmware. </br>IMPERATIVE to rerun AsMedia Hotfix 2006_1E EACH TIME after modifying Chipsets drivers, to align AsMedia Firmware with new Chipset drivers|
 
 ## Hints with Microsoft Modern Standby
 > [!NOTE]
@@ -60,13 +60,15 @@ Script uses the GUID for the default Balanced Power Scheme, with Power scheme GU
 > Script currently will not work for other Power Schemes, default one is used. But this can be modified in the script if needed for specific configurations
 
 ## Software configuration used
-Software configuration used for set up and tests:
+This software configuration is used for set up and tests. Other versions can be used, but remember to reprogram AsMedia device, in case of changing Chipset drivers. 
+
+Also, rerun this script in case of nVidia driver change, to reapply power saving settings to nVidia HDA audio driver. 
 
 | device | driver or software version |
 |-------| -------|
-|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver is NOT ADVISED, as it may create conflicts with nVidia audio| 
-|Mediatek Bluetooth| 1.1037.2.433 ASUS driver, no random reboots seen due to Bluetooth LE devices use|
-|AMD Graphics |ASUS AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers. <br/>Note that chipset updates may mess USBs , and require reinstallation of ASUS Hotfix Firmware 2006_1E|
+|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver is not advised, as it may create conflicts with nVidia audio| 
+|Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
+|AMD Graphics |ASUS AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers. <br/>Note that chipset updates require reinstallation of ASUS Hotfix Firmware 2006_1E|
 |nVidia Graphics and HDA sound | Graphics: 536.45 (Asus version, stable) or recent ones (works Ok, but sometimes less stable)</br>HD audio: 1.3.40.14 and 1.4.0.1 |
 |G-Helper| 0.187.0 and later|
 |Modern Standby| ! ENABLED !|
