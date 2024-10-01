@@ -143,19 +143,19 @@ call :ProcessKey add "%RegKeyHeader%\GraphicsDrivers" "TdrDelay" "REG_DWORD" %Td
 :: 5 - Force Idle states to D0 for nVidia HDA, AMD and Realtek audio drivers. Note Realtek forces Idle times, not Idle power state
 :: Nvidia is necessary. Realtek and AMD : Uncomment lines if necessary, in case of unstability with sound
 :: https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/portcls-registry-power-settings
-set "Step=6.1/ %RBEX% If HDMI sound issues: Force Idle Power State to D0 in AC and DC for nVidia HDA driver.&echo         NOTE: RERUN this script if you change the nVidia driver!"
+set "Step=6.1/ %RBEX% Stabilize nVidia sound device: Force Idle Power State to D0 in AC and DC for nVidia HDA driver.&echo         NOTE: RERUN this script if you change the nVidia driver!"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=6.1a and 6.1b/ %RBEX% If HDMI sound issues: Disable Idle Time AC and DC for nVidia HDA driver.&echo         NOTE: RERUN this script if you change the nVidia driver!"
+set "Step=6.1a and 6.1b/ %RBEX% Stabilize nVidia sound device: Disable Idle Time AC and DC for nVidia HDA driver.&echo         NOTE: RERUN this script if you change the nVidia driver!"
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %nvidletime% 
 call :ProcessKey add "%nVidiaHDA%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %nvidletime%
-set "Step=6.2/ %RBEX% If sound issues: Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
+set "Step=6.2/ %RBEX% Stabilize sound devices: Force Idle Power State to D0 in AC and DC for Realtek Audio driver"
 call :ProcessKey add "%Realtek%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
-set "Step=6.3/ %RBEX% If sound issues: Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
+set "Step=6.3/ %RBEX% Stabilize sound devices: Force Idle Power State to D0 in AC and DC for AMD Streaming Audio driver"
 call :ProcessKey add "%AMDstreaming%\PowerSettings" "IdlePowerState" "REG_BINARY" %PwrIdleState%
 :: Uncomment 3 next lines if AMD Streaming Audio driver is installed, and sound issues happen
-::set "Step=4.3a and 4.3b/ %RBEX% Disable Idle Time AC and DC for AMD Streaming Audio driver"
-::call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
-::call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
+set "Step=6.3a and 6.3b/ %RBEX% Stabilize sound devices: Disable Idle Time AC and DC for AMD Streaming Audio driver"
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "ConservationIdleTime" "REG_BINARY" %amdidletime% 
+call :ProcessKey add "%AMDstreaming%\PowerSettings" "PerformanceIdleTime" "REG_BINARY" %amdidletime%
 
 if not defined admin (
 	echo:
@@ -202,6 +202,7 @@ if errorlevel 1 (
 	echo DID NOT FIND THE CORRESPONDING REGISTRY KEY.
 	echo THIS ACTION WILL BE SKIPPED, NOTHING WILL BE CHANGED.
 	echo PLEASE CHECK MANUALLY REGISTRY FOR THIS REGISTRY KEY[0m
+	if not defined quiet cls & exit /b
 	goto :EndProcessKey
 )
 echo:
