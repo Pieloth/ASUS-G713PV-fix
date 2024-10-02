@@ -66,7 +66,7 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 
 | device | driver or software version |
 |-------| -------|
-|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver is not advised, as it may create conflicts with nVidia audio| 
+|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, as it may create conflicts with nVidia audio| 
 |Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
 |AMD Graphics |ASUS AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers. <br/>Note that chipset updates require reinstallation of ASUS Hotfix Firmware 2006_1E|
 |nVidia Graphics and HDA sound | Graphics: 536.45 (Asus version, stable) or recent ones (works Ok, but sometimes less stable)</br>HD audio: 1.3.40.14 and 1.4.0.1 |
@@ -85,7 +85,9 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 > Just rerun the script in such case after a driver installation.
 
 > [!CAUTION]
-> Again, REAPPLY AsMedia Hotfix Updater 2006_1E each time Chipset drivers are changed, or updated with AMD Adrenalin suite 
+> REAPPLY AsMedia Hotfix Updater 2006_1E each time Chipset drivers are changed, or updated with AMD Adrenalin suite, as said before
+>
+> DISCONNECT ALL USB devices from laptop before running this Firmware updater 
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Windows or driver value|New tweaked value|
 |:-----|:---------------------|:-----------:|:------------------------:|
