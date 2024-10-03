@@ -85,9 +85,9 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 > Just rerun the script in such case after a driver installation.
 
 > [!CAUTION]
-> REAPPLY AsMedia Hotfix Updater 2006_1E each time Chipset drivers are changed, or updated with AMD Adrenalin suite, as said before
+> REAPPLY AsMedia Hotfix Updater 2006_1E each time Chipset drivers are changed, or updated with AMD Adrenalin suite!!
 >
-> DISCONNECT ALL USB devices from laptop before running this Firmware updater 
+> DISCONNECT ALL USB devices from laptop before running this Firmware updater!!
 
 |Action|Command or Registry key: all HKLM keys expand to HKLM\SYSTEM\CurrentControlSet\Control\ |Windows or driver value|New tweaked value|
 |:-----|:---------------------|:-----------:|:------------------------:|
