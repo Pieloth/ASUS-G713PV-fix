@@ -86,8 +86,14 @@ if exist %windir%\system32\config\systemprofile\* (
 ) else (
   echo  [7m[91m]]] Run without Admin level =^> No change or parameters will be saved, current and target parameters will be shown[0m
 )
-if not defined quiet %pausecls%
+echo:
+::if not defined quiet %pausecls%
+if defined quiet goto :StartSettings
+choice /c qi /m "Apply settings (I)nteractive or (Q)uiet"
+if %errorlevel% equ 2 cls & goto :StartSettings
+set quiet=1
 
+:StartSettings
 :: 1 - Hibernation, Fast Startup enable and setup
 :: set Fast Startup ON
 set "Step=1.1/ %RBEX% (Re)-Activate Fast Startup, possible and safe if power down policy is changed also (see later)"
@@ -124,13 +130,13 @@ call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterva
 :: https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-device-idle-policy
 set "Step=4.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC).&echo Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
+:: RECOMMENDED: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
+set "Step=4.2a and 4.2b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
 ::set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
-:: RECOMMENDED: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
-::set "Step=3.3a and 3.3b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
-::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
-::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
 
 :: Tested here with ASUS default drivers 
 :: Realtek 6.0.9549.1, AMD Graphics 31.0.14038.8002, AMD Chipset 1.2.0.120, nVidia 31.0.15.3645 with HDA sound 1.3.40.14
@@ -161,7 +167,7 @@ if not defined admin (
 	echo:
 	echo [7m[91m    ---   Rerun this script in Admin mode to be able to set all these parameters   ---   [0m
 	echo:
-	if not defined quiet %pausecls%
+	timeout /t 10 /nobreak
 	goto :eof
 )
 
