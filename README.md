@@ -139,12 +139,16 @@ No particular impact on performances noted, as it concerns only Idle and Sleep s
 
    In cas a Registry key is not found, for any reason, no action will be performed, just skipped.
 
+3. **Run script options after start:**
+   * Quiet: all settings will be applied as a single batch
+   * Interactive: Each setting can be selected individually
+
 4. **Command line options**
 
    Following command line options are available
 
    - /Q  : to run quiet. All actions are performed without pause, and logged into the script terminal window. Output redirection to a log file is possible
-   - /R  : Rollback procedure, to retreive default Windows 11 parameters. Same as normal mode, each tweak can be individually rollbacked
+   - /R  : Rollback procedure, to retreive default Windows 11 parameters. Same as normal mode, each tweak can be individually rollbacked or as a batch
 
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
