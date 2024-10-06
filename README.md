@@ -76,6 +76,18 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
 |Armoury Crate| Not tested |
 | Windows version | Tests done with latest French Windows 11 version|
+
+## Modifiying the software configuration
+Laptop software configuration can be changed, nVidia, AMD+Chipset drivers, etc...
+
+In such case, the way to go is the following:
+1. Upgrade nVidia driver, reboot
+2. Upgrade AMD + Chipset driver, reboot
+3. Check availability of Windows updates (Including advanced updates), and if any, install and reboot
+4. MANDATORY: If step 2. is executed and new chipset is installed, then run again the Firwmare updater 2006_1E, in order to program AsMedia chip, accordingly to the newer chipset configuration
+5. If step 1. is executed, then run again this batch script, in order to set parameters for nVidia sound HDA
+6. Then, in case of unstability with Bluetooth LE devices, (Bluetooth mouse, XBOX Elite controller, ...), reinstall the Mediatek Bluetooth driver, from the Device Manager
+
 > [!WARNING]
 > Rollbacking AMD Chipset driver is a bit tricky, AMD uninstall program does only uninstall graphics driver. </br>Uninstalling Chipset requires to remove in device Manager, one by one, the 8 devices modified:
 > * Security: AMD PSP 11.0 Device
