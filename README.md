@@ -76,6 +76,11 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
 |Armoury Crate| Not tested |
 | Windows version | Tests done with latest French Windows 11 version|
+> [!WARNING]
+> Rollbacking AMD Chipset driver is a bit tricky, AMD uninstall program does only uninstall graphics driver. </br>Uninstalling Chipset requires to remove in device Manager, one by one, the 8 devices modified:
+> * Security: AMD PSP 11.0 Device
+> * System: AMD GPIO Controller, AMD I2C controllers (x3), AMD Micro PEP, AMD PPM Provisionning file, AMD SMBUS
+
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
 > Settings performed for nVidia HDA, Realtek HDA and for AMD Streaming Audio drivers need to be applied again each time these drivers are reinstalled, along with Adrenalin suite
