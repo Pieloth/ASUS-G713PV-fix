@@ -84,7 +84,7 @@ In such case, the way to go is the following:
 1. Upgrade nVidia driver, reboot
 2. Upgrade AMD + Chipset driver, reboot
 3. Check availability of Windows updates (Including advanced updates), and if any, install and reboot
-4. MANDATORY: If step 2. is executed and new chipset is installed, then run again the Firwmare updater 2006_1E, in order to program AsMedia chip, accordingly to the newer chipset configuration
+4. MANDATORY: If step 2. is executed and new chipset is installed, then run again the Firwmare updater 2006_1E (Disconnect all USB devices before!!), in order to program AsMedia chip, accordingly to the newer chipset configuration
 5. Run this batch script
 6. Then, in case of unstability with Bluetooth LE devices, (Bluetooth mouse, XBOX Elite controller, ...), reinstall the Mediatek Bluetooth driver, from the Device Manager
 
