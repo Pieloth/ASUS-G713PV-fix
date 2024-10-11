@@ -89,8 +89,8 @@ if exist %windir%\system32\config\systemprofile\* (
 echo:
 ::if not defined quiet %pausecls%
 if defined quiet goto :StartSettings
-choice /c qi /m "Apply settings (I)nteractive or (Q)uiet"
-if %errorlevel% equ 2 cls & goto :StartSettings
+choice /c iq /m "Apply settings (I)nteractive or (Q)uiet"
+if %errorlevel% equ 1 cls & goto :StartSettings
 set quiet=1
 
 :StartSettings
