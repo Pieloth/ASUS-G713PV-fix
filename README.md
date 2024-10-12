@@ -123,7 +123,7 @@ In such case, the way to go is as follows:
 |Idle Power state D0 for Realtek HDA driver|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "Realtek audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
 |Idle Power state D0 for AMD streaming driver, if present|HKLM\...\Class\\{4d36e96c-e325-11ce-bfc1-08002be10318}\ "AMD audio" \PowerSettings > IdlePowerState (BINARY) |03000000|00000000|
 > [!NOTE]
-> If a device is not detected, the script will not perform any action, and will skip the tweak
+> If a Registry key is not detected (for instance, a particular device or driver not installed), then script will not perform any action for it, and will skip the tweak to the next one.
 
 > [!IMPORTANT]
 > **REBOOT laptop to take into account changes after script is applied**
