@@ -1,7 +1,9 @@
 # Batch script: ASUS_G713PV_fix.bat 
-A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV unstabilities.
+A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV, G713PI unstabilities.
 
-Possibly works on other models from the same brand or product range too
+So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
+
+Possibly works on other models from the same brand or product range too, like G733P models for instance
 ## Introduction
 This .bat script sets a few parameters in Windows 11 registry, to stabilize ASUS G713PV laptop. 
 
@@ -13,10 +15,9 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 
 |Issues on G713PV |  Comments |
 |-------|-----|
-|Laptop screen Fast Flickers and overall stability |Fixed with: Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?".</br>You have to sign in each time, but "Never" might work too. </br> Core Isolation and security can be fully enabled as per default Windows 11 setting, but 100% Flicker Free is obtained after disabling Core Isolation.|
-|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with same Fast Flickers setting|
-|Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep | Bonus: Laptop now start really faster from Power Off or Hibernation!
-|Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running|
+|Laptop screen Fast Flickers and overall stability |Fixed with: </br> Core Isolation and security can be fully enabled as per default Windows 11 setting, but 100% Flicker Free is obtained after disabling Core Isolation.|
+|Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with:</br>Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?".</br>You have to sign in each time, but "Never" might work too. |
+|Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep</br></br>Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running.</br>Bonus: Laptop now start really faster from Power Off or Hibernation!
 |nVidia nvlddmkm.dll crash during Modern Standby|Increase TdrDelay fixes this, a common setting on dual GPU computers |
 |Sound issues, especially with nVidia HDA sound driver on external HDMI monitor: sound crackling, crash, HDMI sound channel loss. Can mess also Realtek sound on switching sound|Stay with OEM ASUS official 6.0.9549.1 .  </br>For AMD Adrenalin install, remove AMD Streaming audio driver helps. </br>nVidia, Realtek HDA Audio Idle Power to D0 driver, Performance and Conservative Idlt Timeouts tweaks stops messing and stabilizes whole laptop. Also valid for AMD Streaming driver if still present|
 |Random reboots</br>More a stop/start due to some internal protection triggered under different HW conditions, but subject to FALSE ALARMS in some cases|1/ Due to misconfiguration between Chipset drivers and AsMedia Firmware. </br>IMPERATIVE to rerun AsMedia Hotfix 2006_1E EACH TIME after modifying Chipsets drivers, to align AsMedia Firmware with new Chipset drivers.</br>2/ Changing Core Isolation / Memory Integrity state (On or Off) seems to mess the Mediatek Bluetooth driver. Bluetooth LE devices sometimes get laggy, and may trigger these Random reboots. Workaround is simply to reinstall the Mediatek Bluetooth driver if such situation is seen.|
