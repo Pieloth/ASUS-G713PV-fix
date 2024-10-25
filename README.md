@@ -70,7 +70,7 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 |Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, as it may create conflicts with nVidia audio| 
 |Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
 |AMD Graphics |ASUS AMD graphics driver (31.0.14038.8002), or AMD Adrenalin Full, minimal, or drivers only install. <br/>Note that AMD chipset updates (included in Adrenalin package) require RERUN of ASUS Hotfix Firmware 2006_1E. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
-|nVidia Graphics and HDA sound | Graphics: 536.45 (Asus version, sometimes unstable) or better to use recent ones like 556.12</br>HD audio: 1.3.40.14 and much better 1.4.0.1 coming with recent nVidia driver like 556.12 |
+|nVidia Graphics and HDA sound | Graphics: 536.45 + HDA sound 1.3.40.14 (Asus version, but sometimes unstable on Wake up) </br>But much better to use recent versions like 556.12 + HDA sound 1.4.0.1</br>|
 |G-Helper| 0.187.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e|
