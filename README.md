@@ -69,8 +69,8 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 |-------| -------|
 |Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, as it may create conflicts with nVidia audio| 
 |Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
-|AMD Graphics |ASUS AMD graphics driver, or Adrenalin (24.5.1) Full, minimal, or drivers only install. </br>For Adrenalin, Better remove AMD Streaming audio driver from Device Manager / audio, video, games controllers section, which conflicts with nVidia and Realtek audio drivers. <br/>Note that chipset updates require reinstallation of ASUS Hotfix Firmware 2006_1E|
-|nVidia Graphics and HDA sound | Graphics: 536.45 (Asus version, stable) or recent ones (works Ok, but sometimes less stable)</br>HD audio: 1.3.40.14 and 1.4.0.1 |
+|AMD Graphics |ASUS AMD graphics driver (31.0.14038.8002), or AMD Adrenalin Full, minimal, or drivers only install. <br/>Note that AMD chipset updates (included in Adrenalin package) require RERUN of ASUS Hotfix Firmware 2006_1E. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
+|nVidia Graphics and HDA sound | Graphics: 536.45 (Asus version, sometimes unstable) or better to use recent ones like 556.12</br>HD audio: 1.3.40.14 and much better 1.4.0.1 coming with recent nVidia driver like 556.12 |
 |G-Helper| 0.187.0 and later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e|
@@ -93,6 +93,9 @@ In such case, the way to go is as follows:
 > Rollbacking AMD Chipset driver is a bit tricky, AMD uninstall program does only uninstall graphics driver. </br>Uninstalling Chipset requires to remove in device Manager, one by one, the 8 devices modified:
 > * Security: AMD PSP 11.0 Device
 > * System: AMD GPIO Controller, AMD I2C controllers (x3), AMD Micro PEP, AMD PPM Provisionning file, AMD SMBUS
+>
+> Rollbacking nVidia driver requires to use nVidia cleanup tool CleanupTool_1.0.20.0.exe, just google for it on nVidia site.
+> </br>Note that DDU DOES NOT CLEAN correctly the HDA sound device (WDM), which brings then unstability
 
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
@@ -100,10 +103,10 @@ In such case, the way to go is as follows:
 >
 > "nVidia audio", "AMD audio", and "Realtek audio" device numbers hereunder are automatically detected by script
 >
-> Just rerun the script in such case after a driver installation.
+> JUST RERUN THE SCRIPT in such case after an AMD or nVidia driver installation.
 
 > [!CAUTION]
-> REAPPLY AsMedia Hotfix Updater 2006_1E each time Chipset drivers are changed, or updated with AMD Adrenalin suite!!
+> REAPPLY AsMedia Hotfix Updater 2006_1E each time AMD Chipset drivers are changed, or updated with AMD Adrenalin suite!!
 >
 > DISCONNECT ALL USB devices from laptop before running this Firmware updater!!
 
