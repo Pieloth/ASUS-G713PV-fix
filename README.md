@@ -67,6 +67,7 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 
 | device | driver or software version |
 |-------| -------|
+|BIOS|Latest 334 | 
 |Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, as it may create conflicts with nVidia audio| 
 |Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
 |AMD Graphics |ASUS AMD graphics driver (31.0.14038.8002), or AMD Adrenalin Full, minimal, or drivers only install. <br/>Note that AMD chipset updates (included in Adrenalin package) require RERUN of ASUS Hotfix Firmware 2006_1E. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
