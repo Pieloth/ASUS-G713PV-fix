@@ -70,9 +70,9 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 |BIOS|Latest 334 | 
 |Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, as it may create conflicts with nVidia audio| 
 |Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
-|AMD Graphics |ASUS AMD graphics driver (31.0.14038.8002), or AMD Adrenalin Full, minimal, or drivers only install. <br/>Note that AMD chipset updates (included in Adrenalin package) require RERUN of ASUS Hotfix Firmware 2006_1E. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
-|nVidia Graphics and HDA sound | Graphics: 536.45 + HDA sound 1.3.40.14 (Asus version, but sometimes unstable on Wake up) </br>But much better to use recent versions like 556.12 + HDA sound 1.4.0.1</br>|
-|G-Helper| 0.187.0 and later|
+|AMD Graphics |ASUS AMD graphics driver (31.0.14038.8002), or more recent AMD Adrenalin Full, minimal, or drivers only install. <br/>Note that AMD chipset updates (included in Adrenalin package) require RERUN of ASUS Hotfix Firmware 2006_1E. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
+|nVidia Graphics and HDA sound | Graphics: 536.45 + HDA sound 1.3.40.14 (Asus version, but sometimes unstable on Wake up) </br>But much better to use recent versions like 556.12 + HDA sound 1.4.0.1 or latest ones </br>|
+|G-Helper| 0.197.0 or later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e|
 |Windows 11 modes| All 3 modes available: Power saving, Balanced, Performance, but using Power saving most of the time|
