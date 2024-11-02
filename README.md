@@ -69,7 +69,7 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 |-------| -------|
 |BIOS|Latest 334 | 
 |AMD Chipset|Probably the most important and cornerstone for the full stability. </br>With time and Windows updates, original Asus chipset package (1.2.0.120) has become less stable, and difficult to avoid crashes on Wake up from Modern Standby now. <br/>Best is to use a recent Adrenalin package like 24.10.1 with its recent chipset update (1.2.0.126) </br>**Note** that AMD chipset update require **RERUN of ASUS Hotfix Firmware 2006_1E**, with laptop set without any USB, HDMI or Bluetooth device connected. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
-|AMD Graphics |Better to use a recent AMD Adrenalin Full, minimal, or drivers only install like 24.10. ASUS original AMD graphics driver (31.0.14038.8002) is now somehow outdated and probably more subject to unstabilities with nVidia driver cohabitation.|
+|AMD Graphics |Better to use a recent AMD Adrenalin Full, minimal, or drivers only install like 24.10.1</br>ASUS original AMD graphics driver (31.0.14038.8002) is now somehow outdated and probably more subject to unstabilities with nVidia driver cohabitation.|
 |nVidia Graphics and HDA sound | As for AMD, it is now much better to use recent versions like 566.nn + HDA sound 1.4.2.6 or latest ones </br>Older Asus Graphics: 536.45 + HDA sound 1.3.40.14 are now sometimes unstable on Wake up from Modern Standby|
 |Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, this package is specific to Asus setting, other ones may create conflicts with nVidia audio| 
 |Mediatek Bluetooth| 1.1037.2.433 ASUS driver or later|
