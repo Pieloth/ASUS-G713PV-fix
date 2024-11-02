@@ -89,7 +89,7 @@ In such case, the way to go is as follows:
 3. Check availability of Windows updates (Including advanced updates), and if any, install them and reboot
 4. **MANDATORY**: If step 2. is executed and new chipset drivers are installed, then run again the Firwmare updater 2006_1E, in order to program AsMedia chip, accordingly to the newer chipset configuration. </br>
 **Be sure to Disconnect any USB, Bluetooth or HDMI device before**. Laptop to be left without any connected device for running this Firmware update. </br>
-A 1st reboot is asked for, then log back in, and wait 1 mn for the 2nd reboot request. After this 2nd reboot, all devices can be reconnected to the laptop.
+A 1st reboot is asked for, then log back in, and wait 1 mn for the 2nd reboot request. </br>After this 2nd reboot, all devices can be reconnected to the laptop.
 5. Run this batch script ASUS_G713PV_fix.bat, reboot
 6. Then, in case of unstability seen with Bluetooth LE devices, (weird behavior with Bluetooth mouse, Bluetooth XBOX Elite 2 controller, ...), reinstall the Mediatek Bluetooth driver, simply from the Device Manager </br>(Select Mediatek Bluetooth driver -> Update driver -> check my computer for drivers -> Choose from my computer -> reselect the same Mediatek driver and click Ok)
 
