@@ -68,10 +68,11 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 | device | driver or software version |
 |-------| -------|
 |BIOS|Latest 334 | 
-|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, as it may create conflicts with nVidia audio| 
-|Mediatek Bluetooth| 1.1037.2.433 ASUS driver|
-|AMD Graphics |ASUS AMD graphics driver (31.0.14038.8002), or more recent AMD Adrenalin Full, minimal, or drivers only install. <br/>Note that AMD chipset updates (included in Adrenalin package) require RERUN of ASUS Hotfix Firmware 2006_1E. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
-|nVidia Graphics and HDA sound | Graphics: 536.45 + HDA sound 1.3.40.14 (Asus version, but sometimes unstable on Wake up) </br>But much better to use recent versions like 556.12 + HDA sound 1.4.0.1 or latest ones </br>|
+|AMD Chipset|Probably the most important and cornerstone for the full stability. </br>With time and Windows updates, original Asus chipset package (1.2.0.120) has become less stable, and difficult to avoid crashes on Wake up from Modern Standby now. <br/>Best is to use a recent Adrenalin package like 24.10.1 with its recent chipset update (1.2.0.126) </br>**Note** that AMD chipset update require **RERUN of ASUS Hotfix Firmware 2006_1E**, with laptop set without any USB, HDMI or Bluetooth device connected. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
+|AMD Graphics |Better to use a recent AMD Adrenalin Full, minimal, or drivers only install like 24.10. ASUS original AMD graphics driver (31.0.14038.8002) is now somehow outdated and probably more subject to unstabilities with nVidia driver cohabitation.|
+|nVidia Graphics and HDA sound | As for AMD, it is now much better to use recent versions like 566.nn + HDA sound 1.4.2.6 or latest ones </br>Older Asus Graphics: 536.45 + HDA sound 1.3.40.14 are now sometimes unstable on Wake up from Modern Standby|
+|Realtek Audio|6.0.9549.1 ASUS driver. Updating this driver seems not advised, this package is specific to Asus setting, other ones may create conflicts with nVidia audio| 
+|Mediatek Bluetooth| 1.1037.2.433 ASUS driver or later|
 |G-Helper| 0.197.0 or later|
 |Modern Standby| ! ENABLED !|
 |Legacy Power Scheme| Balanced mode, with GUID: 381b4222-f694-41f0-9685-ff5bb260df2e|
@@ -86,8 +87,9 @@ In such case, the way to go is as follows:
 1. Upgrade nVidia driver, reboot
 2. Upgrade AMD + Chipset driver, reboot
 3. Check availability of Windows updates (Including advanced updates), and if any, install them and reboot
-4. **MANDATORY**: If step 2. is executed and new chipset drivers are installed, then run again the Firwmare updater 2006_1E (Be sure to Disconnect all USB devices before!!), in order to program AsMedia chip, accordingly to the newer chipset configuration
-5. Run this batch script ASUS_G713PV_fix.bat
+4. **MANDATORY**: If step 2. is executed and new chipset drivers are installed, then run again the Firwmare updater 2006_1E, in order to program AsMedia chip, accordingly to the newer chipset configuration. </br>
+**Be sure to Disconnect any USB, Bluetooth or HDMI device before**. Laptop to be left without any connected device for running this Firmware update.
+5. Run this batch script ASUS_G713PV_fix.bat, reboot
 6. Then, in case of unstability seen with Bluetooth LE devices, (Bluetooth mouse, XBOX Elite controller, ...), reinstall the Mediatek Bluetooth driver, simply from the Device Manager </br>(Select Mediatek Bluetooth driver -> Update driver -> check my computer for drivers -> Choose from my computer -> reselect the same Mediatek driver and click Ok)
 
 > [!WARNING]
@@ -96,7 +98,7 @@ In such case, the way to go is as follows:
 > * System: AMD GPIO Controller, AMD I2C controllers (x3), AMD Micro PEP, AMD PPM Provisionning file, AMD SMBUS
 >
 > Rollbacking nVidia driver requires to use nVidia cleanup tool CleanupTool_1.0.20.0.exe, just google for it on nVidia site.
-> </br>Note that DDU DOES NOT CLEAN correctly the HDA sound device (WDM), which brings then unstability
+> </br>Note that DDU DOES NOT CLEAN correctly the HDA sound device (WDM), which brings then unstability if installing an older driver
 
 ## Summary of actions and tweaks performed by script
 > [!CAUTION]
