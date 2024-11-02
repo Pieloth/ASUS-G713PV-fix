@@ -15,7 +15,7 @@ Summary of different G713PV laptop issues which are 100% solved or almost, and s
 
 |Issues on G713PV |  Comments |
 |-------|-----|
-|Laptop screen Fast Flickers and overall stability |Fixed with: </br> Core Isolation and security can be fully enabled as per default Windows 11 setting, but 100% Flicker Free is obtained after disabling Core Isolation.|
+|Laptop screen Fast Flickers and overall stability |Fixed with: </br> Core Isolation and security can be fully enabled as per default Windows 11 setting, but 100% Flicker Free is obtained after disabling Core Isolation/Memory Integrity.|
 |Black login screen (no *Windows Spotlight* image) after wake up from Modern Standby, with nVidia icons in taskbar disappear|Fixed with:</br>Set to "Always" the Windows setting/Accounts: "If you’ve been away, when should Windows require you to sign in again?".</br>You have to sign in each time, but "Never" might work too. |
 |Modern Standby with Hibernation/Fast Startup enabled freezes laptop on sleep</br></br>Laptop crash/freeze on Wake up from Modern Standby|Fix with Power Settings registry tweaks: Policy for devices powering down while the system is running.</br>Bonus: Laptop now start really faster from Power Off or Hibernation!
 |nVidia nvlddmkm.dll crash during Modern Standby</br></br>Also, laptop crash/freeze on Wake up from Modern Standby|Increase TdrDelay fixes this, a common setting on dual GPU computers |
