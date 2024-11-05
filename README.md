@@ -175,6 +175,14 @@ No particular impact on performances noted, as it concerns only Idle and Sleep s
    - /Q  : to run quiet. All actions are performed without pause, and logged into the script terminal window. Output redirection to a log file is possible
    - /R  : Rollback procedure, to retreive default Windows 11 parameters. Same as normal mode, each tweak can be individually rollbacked or as a batch
 
+## Running a new verision of the script
+> [!CAUTION]
+> Before running a new version of the script, it is first necessary to rollback all parameters and keys to their default values.
+> 
+> This can only be guaranteed if you run the same current version, with the /R parameter
+> 
+> Once done, it is then possible to run a newer version of the script
+
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
 Synthetic information relative to Modern Standby
