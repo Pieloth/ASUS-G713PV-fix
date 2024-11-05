@@ -131,9 +131,10 @@ call :ProcessKey add "HKEY_CURRENT_USER\Control Panel\Desktop" "DelayLockInterva
 set "Step=4.1/ %RBEX% policy for devices powering down while the system is running (power saving for AC and DC).&echo Changing this key is ABSOLUTELY NECESSARY to mix Modern Standby, Hibernate and Fast Startup."
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: NOT RECOMMENDED due to suspicious Freeze after MSO: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
-:: set "Step=4.2a and 4.2b/ %RBEX% Disconnected Standby mode in AC and DC set to *Aggressive* for getting to DRIPS sleep faster"
-:: call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %modeStby%
-:: call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" %modeStby%
+:: So set it to normal. 
+set "Step=4.2a and 4.2b/ %RBEX% Disconnected Standby mode in AC and DC set to *Normal*, Aggressive is not supported and can cause Freeze after MSO run"
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 0
+call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" 0
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
 ::set "Step=3.2/ %RBEX% Networking connectivity in Standby: Disabled for AC. Connectivity in DC will stay to: 'managed by Windows'"
 ::call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %netACstby%
