@@ -132,7 +132,7 @@ set "Step=4.1/ %RBEX% policy for devices powering down while the system is runni
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\4faab71a-92e5-4726-b531-224559672d19\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" %policypwrdn%
 :: NOT RECOMMENDED due to suspicious Freeze after MSO: Enhance Disconnected standby experience in Aggressive mode for faster DRIPS
 :: So set it to normal. 
-set "Step=4.2a and 4.2b/ %RBEX% Disconnected Standby mode in AC and DC set to *Normal*, Aggressive is not supported and can cause Freeze after MSO run"
+set "Step=4.2a and 4.2b/ %RBEX% Disconnected Standby mode in AC and DC forced to *Normal* (W11 default), Aggressive can cause a Freeze after MSO is run"
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "ACSettingIndex" "REG_DWORD" 0
 call :ProcessKey add "%RegKeyHeader%\Power\PowerSettings\68afb2d9-ee95-47a8-8f50-4115088073b1\DefaultPowerSchemeValues\%actpowplanguid%" "DCSettingIndex" "REG_DWORD" 0
 :: RECOMMENDED: Disable networking in standby in AC (DC should not be necessary) for more quiet Modern Standby sleep!
