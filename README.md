@@ -1,4 +1,19 @@
 # Batch script: ASUS_G713PV_fix.bat 
+
+> [!IMPORTANT]
+> **IMPORTANT INFORMATION FIRST**
+>
+> With:
+> - Win 11 24H2
+> - AsMedia 4242 chip Firmware 4.0.0.13 update, available from www.station-drivers.com
+>
+> most of the tweaks here are now fixed!
+>
+> - Flickers: Fixed!
+> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All Fixed!
+> 
+> Only to be left, the black logon screen tweak (see hereunder), and if necessary, audio tweaks, if you experience issues with HDMI audio  
+> 
 A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV, G713PI unstabilities.
 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
