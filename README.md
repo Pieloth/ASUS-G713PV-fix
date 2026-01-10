@@ -6,8 +6,10 @@
 > With:
 > - Win 11 25H2
 > - AsMedia 4242 chip Firmware 4.0.0.13 update, available from [www.station-drivers.com](https://www.station-drivers.com/index.php/fr/component/remository/Drivers/Asmedia/ASM-1x4x-2x4x-314x2-3242-4242--...--and--107x-2074-USB-3.x--and--USB-4.x-Controllers/Firmwares/ASM-4242-USB-4-Controller/Asmedia-ASM-4242-%28USB-4.0%29-Firmware-Version-1.02.22.00.00.11/lang,fr-fr/)
+> - A few Windows 11 settings
+> - A bunch of driver updates
 >
-> All issues are now fixed
+> All issues are now fixed (see details below)
 >
 > - Flickers fixed
 > - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed
