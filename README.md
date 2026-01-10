@@ -25,11 +25,11 @@ Possibly works on other models from the same brand or product range too, like G7
 ## Freeze on various Modern Standby combined situations workaround, black logon screen workaround
 Many issues combining Modern Standby with Hibernate or Fast Startup, can be fixed by a simple tweak in Windows settings 
 
-Here are the 2 most important Windows settings that will help for those situations:
+Here are the 2 most important Windows settings that will help for those situations, in [Accounts > Sign-in options](https://ms-settings:signinoptions):
 
 <img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
 
-1. Option to reconnect each time after you've been away: Set it to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
+1. Option to sign-in each time after you've been away: Set it to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
 2. Option to use connection info to finish configuration after update: Set it to DISABLED, to get rid of the various freezes in Modern Standby
 
 Not sure about this, but those 2 settings hide probably a misbehavior of Windows, to communicate properly with the TPM 2.0 chip in order to retreive a connection token, while Windows is in Modern Standby, but not in DRIPS state. 
