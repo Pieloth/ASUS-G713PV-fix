@@ -1,25 +1,134 @@
-# Batch script: ASUS_G713PV_fix.bat 
+# Batch script: ASUS_G713PV_fix.bat - Final status
 
 > [!IMPORTANT]
 > **IMPORTANT INFORMATION FIRST**
 >
 > With:
-> - Win 11 24H2
-> - AsMedia 4242 chip Firmware 4.0.0.13 update, available from www.station-drivers.com
+> - Win 11 25H2
+> - AsMedia 4242 chip Firmware 4.0.0.13 update, available from [www.station-drivers.com](https://www.station-drivers.com/index.php/fr/component/remository/Drivers/Asmedia/ASM-1x4x-2x4x-314x2-3242-4242--...--and--107x-2074-USB-3.x--and--USB-4.x-Controllers/Firmwares/ASM-4242-USB-4-Controller/Asmedia-ASM-4242-%28USB-4.0%29-Firmware-Version-1.02.22.00.00.11/lang,fr-fr/)
 >
-> most of the tweaks here are now fixed!
+> All issues are now fixed
 >
-> - Flickers: Fixed!
-> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All Fixed!
+> - Flickers fixed
+> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed
+> - Black logon screen fixed by a simple tweak
+> - Enhance the Modern Standby experience to be closer to former S3 standby
+> - Stop Random Reboot situation, due to the Mediatek Bluetooth driver
 > 
-> Only to be left, the black logon screen tweak (see hereunder), and if necessary, audio tweaks, if you experience issues with HDMI audio  
-> 
-A few Windows 11 settings tweaks in order to fix laptop ASUS G713PV, G713PI unstabilities.
+A few Windows 11 settings tweaks in order to fix all ASUS G713PV, G713PI laptop unstabilities.
 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
 
 Possibly works on other models from the same brand or product range too, like G733P models for instance
-## Introduction
+## Freeze on various Modern Standby combined situations workaround, black logon screen workaround
+Many issues combining Modern Standby with Hibernate or Fast Startup, can be fixed by a simple tweak in Windows settings 
+
+Here are the 2 most important Windows settings that will help for those situations:
+
+<img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
+
+1. Option to reconnect each time after you've been away: Set it to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
+2. Option to use connection info to finish configuration after update: Set it to DISABLED, to get rid of the various freezes in Modern Standby
+
+Not sure about this, but those 2 settings hide probably a misbehavior of Windows, to communicate properly with the TPM 2.0 chip in order to retreive a connection token, while Windows is in Modern Standby, but not in DRIPS state. 
+
+At certain moment, Windows will request to reconnect to the session. 
+
+It turns out that if the laptop has been started after a hibernate or in Fast Startup mode, the TPM chip is not properly initialized, and leads to freezing situations, when laptop goes to Modern Standby afterwards, and Windows requests a reconnexion token to the TPM chip.
+
+Cannot state if this is a BIOS, Windows, or AMD TPM driver issue, but something wrong in here
+
+Those 2 workarounds work fine for me
+
+## Better Modern Standby experience, closer to former S3 
+This is a simple tweak, that will take effect only when the laptop goes into Modern Standby
+
+By default, Windows uses 2 different policies for devices in Modern Standby:
+- A policy named: "Performance". Set in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
+- A policy named: "Power saving". Set in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
+
+DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping.
+
+On Asus STRIX laptop, this state can be easily identified in AC mode, bu the lights on the keyboard, in a nice red effect:
+
+![ezgif-608d3a39ba95bd6d](https://github.com/user-attachments/assets/2d6b0e80-a177-456c-9006-9e70241569f4)
+
+So to enhance the AC standby to be closer to S3 sleep state, set the AC standby policy to be "Power saving" instead of "Performance" 
+
+This can be easily configurerd by command line, for the current account.
+
+Use a simple terminal window (NOT admin) to enter some powercfg commands:
+
+<img width="1101" height="507" alt="image" src="https://github.com/user-attachments/assets/0f09d5b9-423e-4f83-9de8-5083eec6b87c" />
+
+1. This first command will set the AC power mode standby policy to use the "Power saving" policy\
+   `powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_NONE DEVICEIDLE 1`
+
+3. this second will display the current policies in use. "Power saving" is 1, Performance is 0\
+   `powercfg /qh SCHEME_CURRENT SUB_NONE DEVICEIDLE`
+
+## Tweaking hibernate
+Hibernate mode is not enabled nor configured by default in Windows 11
+
+You can enable Hibernate mode, using the Legacy Configuration panel / Power options / Power buttons
+
+Or use the Wintoys application
+
+To set the Hibernate timeout, use a simple terminal window and command line: 
+
+1. For AC timeout: \
+   `powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE <Timeout AC value in seconds>`\
+   The Timeout value is to be set in seconds in this command line
+2. For DC timeout: \
+   `powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE <Timeout DC value in seconds>`\
+   The Timeout value is to be set in seconds in this command line
+
+3. To read the current Hibernate timeout values: \
+   `powercfg /q SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE`\
+   Note that the timeouts values are displayed in Hexadecimal
+
+
+## Drivers and Firmware
+The default Windows 11 25H2 drivers, and Asus drivers are used, with the exception of the followings:
+
+1. **ASMedia 4242 Firmware**\
+There's a more recent version of this Firmware available here: [www.station-drivers.com](https://www.station-drivers.com/index.php/fr/component/remository/Drivers/Asmedia/ASM-1x4x-2x4x-314x2-3242-4242--...--and--107x-2074-USB-3.x--and--USB-4.x-Controllers/Firmwares/ASM-4242-USB-4-Controller/Asmedia-ASM-4242-%28USB-4.0%29-Firmware-Version-1.02.22.00.00.11/lang,fr-fr/)\
+This latest version makes use of USB-C ports more stable than with Asus firmware version (outdated)
+
+2. **AMD Chipset and driver**\
+Latest Adrenalin 25.12.1 with its associated chipset 7.11.26.2142 works fine
+
+3. **nVidia GPU driver**\
+Version 581.80 of the driver is recent and works well. More recent are less stable => keeping this one
+
+4. **Mediatek Bluetooth Driver**\
+This is an IMPORTANT update.\
+The Mediatek driver, is one source of Random Reboots (sudden power off then power on) of the laptop\
+Most stable version I use is: **1.1040.2.485**\
+It is available from: [https://catalog.update.microsoft.com](https://catalog.update.microsoft.com/Search.aspx?q=1.1040.2.485)\
+Search for this version in the search bar and get a version for recent Windows 11
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
 This .bat script sets a few parameters in Windows 11 registry, to stabilize ASUS G713PV laptop. 
 
 Designed and tested on this laptop. Likely to be used also on other laptop from same model range.
@@ -82,7 +191,7 @@ Also, rerun this script in case of nVidia driver change, to reapply power saving
 
 | device | driver or software version |
 |-------| -------|
-|BIOS|Latest 334 | 
+|BIOS|Latest 336 | 
 |AMD Chipset|Probably the most important and cornerstone for the full stability. </br>With time and Windows updates, original Asus chipset package (1.2.0.120) has become less stable, and difficult to avoid crashes on Wake up from Modern Standby now. <br/>Best is to use a recent Adrenalin package like 24.10.1 with its recent chipset update (1.2.0.126) </br>**Note** that AMD chipset update require **RERUN of ASUS Hotfix Firmware 2006_1E**, with laptop set without any USB, HDMI or Bluetooth device connected. This is MANDATORY to reprogram the AsMedia chip accordingly, otherwise, random reboots may appear! |
 |AMD Graphics |Better to use a recent AMD Adrenalin Full, minimal, or drivers only install like 24.10.1</br>ASUS original AMD graphics driver (31.0.14038.8002) is now somehow outdated and probably more subject to unstabilities with nVidia driver cohabitation.|
 |nVidia Graphics and HDA sound | As for AMD, it is now much better to use recent versions like 566.nn + HDA sound 1.4.2.6 or latest ones </br>Older Asus Graphics: 536.45 + HDA sound 1.3.40.14 are now sometimes unstable on Wake up from Modern Standby|
@@ -197,6 +306,8 @@ No particular impact on performances noted, as it concerns only Idle and Sleep s
 > This can only be guaranteed if you run the same current version, with the /R parameter
 > 
 > Once done, it is then possible to run a newer version of the script
+
+-->
 
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
