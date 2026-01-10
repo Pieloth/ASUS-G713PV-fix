@@ -1,4 +1,4 @@
-# Batch script: ASUS_G713PV_fix.bat - Final status
+# ASUS_G713PV_fix - Final status
 
 > [!IMPORTANT]
 > **IMPORTANT INFORMATION FIRST**
