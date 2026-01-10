@@ -25,7 +25,7 @@ Possibly works on other models from the same brand or product range too, like G7
 ## Freeze on various Modern Standby combined situations workaround, black logon screen workaround
 Many issues combining Modern Standby with Hibernate or Fast Startup, can be fixed by a simple tweak in Windows settings 
 
-Here are the 2 most important Windows settings that will help for those situations, in [Accounts > Sign-in options](https://ms-settings:signinoptions):
+Here are the 2 most important Windows settings that will help for those situations, in [Accounts > Sign-in options](ms-settings:signinoptions):
 
 <img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
 
