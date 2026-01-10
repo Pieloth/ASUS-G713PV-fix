@@ -103,10 +103,13 @@ Latest Adrenalin 25.12.1 with its associated chipset 7.11.26.2142 works fine
 3. **nVidia GPU driver**\
 Version 581.80 of the driver is recent and works well. More recent are less stable => keeping this one
 
-4. **Mediatek Bluetooth Driver**\
-This is an IMPORTANT update.\
-The Mediatek driver, is one source of Random Reboots (sudden power off then power on) of the laptop\
-Most stable version I use is: **1.1040.2.485**\
+4. **Mediatek Bluetooth Driver**
+> [!IMPORTANT]
+> This is an IMPORTANT update.
+> 
+> The Mediatek driver, is one source of Random Reboots (sudden power off then power on) of the laptop
+> 
+Most stable version is: **1.1040.2.485**\
 It is available from: [https://catalog.update.microsoft.com](https://catalog.update.microsoft.com/Search.aspx?q=1.1040.2.485)\
 Search for this version in the search bar and get a version for recent Windows 11
  
