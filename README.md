@@ -49,7 +49,7 @@ By default, Windows uses 2 different policies for devices in Modern Standby:
 - A policy named: "Performance". Set in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
 - A policy named: "Power saving". Set in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
 
-DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping.
+DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
 
 On Asus STRIX laptop, this state can be easily identified in AC mode, bu the lights on the keyboard, in a nice red effect:
 
@@ -109,10 +109,23 @@ Version 581.80 of the driver is recent and works well. More recent are less stab
 > 
 > The Mediatek driver, is one source of Random Reboots (sudden power off then power on) of the laptop
 > 
-Most stable version is: **1.1040.2.485**\
+Most stable version is: **1.1040.2.485**. \
+Others are all candidate to trig a  _Random Reboot_  once a while, when using a Bluetooth device like mouse or Xbox gamepad\
 It is available from: [https://catalog.update.microsoft.com](https://catalog.update.microsoft.com/Search.aspx?q=1.1040.2.485)\
-Search for this version in the search bar and get a version for recent Windows 11
+Search for this version in the search bar and download a version for recent Windows 11\
+Check that your Mediatek card USB VID/PID is listed in the package. For instance, mine is USB VID/PID = 0489/E0F6\
+The file is a .cab, use 7zip to extract the files in a folder, then double clic on the .inf file it contains to install it\
+Check in the Device Manager, that the new driver is in place
  
+## References
+1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
+Synthetic information relative to Modern Standby
+2. [Microsoft learn - PortCls Registry Power Settings](https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/portcls-registry-power-settings)
+Concerns Media devices Idle timeout settings
+3. [Microsoft learn - Device idle policy](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-device-idle-policy)
+Concerns Kernel device drivers Idle timeout management
+4. [Microsoft learn - Allow networking during standby](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-allow-networking-during-standby)
+Concerns about Connectivity in standby, for Modern Standby. Deprecated, but turns out it is still in use.
   
 
 
@@ -314,12 +327,3 @@ No particular impact on performances noted, as it concerns only Idle and Sleep s
 
 -->
 
-## References
-1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
-Synthetic information relative to Modern Standby
-2. [Microsoft learn - PortCls Registry Power Settings](https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/portcls-registry-power-settings)
-Concerns Media devices Idle timeout settings
-3. [Microsoft learn - Device idle policy](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-device-idle-policy)
-Concerns Kernel device drivers Idle timeout management
-4. [Microsoft learn - Allow networking during standby](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-allow-networking-during-standby)
-Concerns about Connectivity in standby, for Modern Standby. Deprecated, but turns out it is still in use.
