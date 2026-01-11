@@ -51,7 +51,7 @@ By default, Windows uses 2 different policies for devices in Modern Standby:
 
 DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
 
-On Asus STRIX laptop, this state can be easily identified in AC mode, bu the lights on the keyboard, in a nice red effect:
+On Asus STRIX laptop, this state can be easily identified in AC mode, by the lights on the keyboard, showing a nice red effect:
 
 ![ezgif-608d3a39ba95bd6d](https://github.com/user-attachments/assets/2d6b0e80-a177-456c-9006-9e70241569f4)
 
