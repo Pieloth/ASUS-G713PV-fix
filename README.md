@@ -7,7 +7,7 @@
 > - Win 11 25H2
 > - AsMedia 4242 chip Firmware 4.0.0.13 update, available from [www.station-drivers.com](https://www.station-drivers.com/index.php/fr/component/remository/Drivers/Asmedia/ASM-1x4x-2x4x-314x2-3242-4242--...--and--107x-2074-USB-3.x--and--USB-4.x-Controllers/Firmwares/ASM-4242-USB-4-Controller/Asmedia-ASM-4242-%28USB-4.0%29-Firmware-Version-1.02.22.00.00.11/lang,fr-fr/)
 > - A few Windows 11 settings
-> - A bunch of driver updates
+> - A bunch of driver updates, with an important one, Mediatek Bluetooth, to avoid some Random Reboots
 >
 > All issues are now fixed (see details below)
 >
@@ -107,10 +107,12 @@ Version 581.80 of the driver is recent and works well. More recent are less stab
 > [!IMPORTANT]
 > This is an IMPORTANT update.
 > 
-> The Mediatek driver, is one source of Random Reboots (sudden power off then power on) of the laptop
+> The Mediatek Bluetooth driver, is one source of Random Reboots (sudden power off then power on) of the laptop
 > 
-Most stable version is: **1.1040.2.485**. \
-Others are all candidate to trig a  _Random Reboot_  once a while, when using a Bluetooth device like mouse or Xbox gamepad\
+> The Mediatek Wifi/Bluetooth card uses USB for the Bluetooth section, and PCIe for Wifi section.
+> 
+Most stable version for the Mediatek Bluetooth driver is: **1.1040.2.485**. \
+All others I've tested are candidate to trig a  _Random Reboot_  once a while, when using a Bluetooth device like mouse or Xbox gamepad\
 It is available from: [https://catalog.update.microsoft.com](https://catalog.update.microsoft.com/Search.aspx?q=1.1040.2.485)\
 Search for this version in the search bar and download a version for recent Windows 11\
 Check that your Mediatek card USB VID/PID is listed in the package. For instance, mine is USB VID/PID = 0489/E0F6\
