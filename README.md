@@ -22,17 +22,37 @@ A few Windows 11 settings tweaks in order to fix all ASUS G713PV, G713PI laptop 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
 
 Possibly works on other models from the same brand or product range too, like G733P models for instance
-## Freeze on various Modern Standby combined situations workaround, black logon screen workaround
+## Freeze on various Modern Standby combined situations workaround, black logon screen workaround, and better stanby/sleep
 Many issues combining Modern Standby with Hibernate or Fast Startup, can be fixed by a simple tweak in Windows settings 
+Note that the 3 tweaks/settings described below are necassary alltogether to insure stability
 
-Here are the 2 most important Windows settings that will help for those situations, in [Accounts -> Sign-in options](ms-settings:signinoptions):
+First, here are 2 important Windows settings in [Accounts -> Sign-in options](ms-settings:signinoptions):
 
 <img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
 
 1. Option to sign-in each time after you've been away: Set it to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
 2. Option to use connection info to finish configuration after update: Set it to DISABLED, to get rid of the various freezes in Modern Standby
 
-Not sure about this, but those 2 settings hide probably a misbehavior of Windows, to communicate properly with the TPM 2.0 chip in order to retreive a connection token, while Windows is in Modern Standby, but not in DRIPS state. 
+3. Third settings concerns policy for devices in low power state.\
+   Windows uses 2 different policies for devices in Modern Standby:
+   - A policy named: "Performance". Set by default in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
+   - A policy named: "Power saving". Set by default in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
+
+   **To get good stability in Modern Standby, the policy for AC needs to be set to "Power saving"**
+
+   This can be easily configurerd by command line, for the current account.
+
+   Use a simple terminal window (NOT admin) to enter some powercfg commands:
+
+<img width="1101" height="507" alt="image" src="https://github.com/user-attachments/assets/0f09d5b9-423e-4f83-9de8-5083eec6b87c" />
+
+   1. This first command will set the AC power mode standby policy to use the "Power saving" policy\
+      `powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_NONE DEVICEIDLE 1`
+
+   2. this second will display the current policies in use. "Power saving" is 1, Performance is 0\
+      `powercfg /qh SCHEME_CURRENT SUB_NONE DEVICEIDLE`
+
+Not sure about this, but those settings hide probably a misbehavior of Windows, to communicate properly with the TPM 2.0 chip in order to retreive a connection token, while Windows is in Modern Standby, but not in DRIPS state. 
 
 At certain moment, Windows will request to reconnect to the session. 
 
@@ -40,34 +60,15 @@ It turns out that if the laptop has been started after a hibernate or in Fast St
 
 Cannot state if this is a BIOS, Windows, or AMD TPM driver issue, but something wrong in here
 
-Those 2 workarounds work fine for me
+This set of 3 workarounds work fine for me
 
-## Better Modern Standby experience, closer to former S3 
-This is a simple tweak, that will take effect only when the laptop goes into Modern Standby
-
-By default, Windows uses 2 different policies for devices in Modern Standby:
-- A policy named: "Performance". Set in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
-- A policy named: "Power saving". Set in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
-
-DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
-
-On Asus STRIX laptop, this state can be easily identified in AC mode, by the lights on the keyboard, showing a nice red effect:
-
-![ezgif-608d3a39ba95bd6d](https://github.com/user-attachments/assets/2d6b0e80-a177-456c-9006-9e70241569f4)
-
-So to enhance the AC standby to be closer to S3 sleep state, set the AC standby policy to be "Power saving" instead of "Performance" 
-
-This can be easily configurerd by command line, for the current account.
-
-Use a simple terminal window (NOT admin) to enter some powercfg commands:
-
-<img width="1101" height="507" alt="image" src="https://github.com/user-attachments/assets/0f09d5b9-423e-4f83-9de8-5083eec6b87c" />
-
-1. This first command will set the AC power mode standby policy to use the "Power saving" policy\
-   `powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_NONE DEVICEIDLE 1`
-
-3. this second will display the current policies in use. "Power saving" is 1, Performance is 0\
-   `powercfg /qh SCHEME_CURRENT SUB_NONE DEVICEIDLE`
+> [!NOTE]
+> DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
+> 
+> On Asus STRIX laptop, this state can be easily identified in AC mode, by the lights on the keyboard, showing a nice red effect:
+> 
+> ![ezgif-608d3a39ba95bd6d](https://github.com/user-attachments/assets/2d6b0e80-a177-456c-9006-9e70241569f4)
+> 
 
 ## Tweaking hibernate
 Hibernate mode is not enabled nor configured by default in Windows 11
