@@ -22,27 +22,30 @@ A few Windows 11 settings tweaks in order to fix all ASUS G713PV, G713PI laptop 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
 
 Possibly works on other models from the same brand or product range too, like G733P models for instance
-## Freeze on various Modern Standby combined situations workaround, black logon screen workaround, and better stanby/sleep
+
+## Freeze on various Modern Standby combined situations workaround, black logon screen workaround, and better standby/sleep
+
 Many issues combining Modern Standby with Hibernate or Fast Startup, can be fixed by a simple tweak in Windows settings 
 Note that the 3 tweaks/settings described below are necassary alltogether to insure stability
 
-First, here are 2 important Windows settings in [Accounts -> Sign-in options](ms-settings:signinoptions):
+First 2 settings are set in Windows settings: [Accounts -> Sign-in options](ms-settings:signinoptions):
 
 <img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
 
-1. Option to sign-in each time after you've been away: Set it to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
-2. Option to use connection info to finish configuration after update: Set it to DISABLED, to get rid of the various freezes in Modern Standby
+1. Option to sign-in each time after you've been away: Set to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
+2. Option to use connection info to finish configuration after update: Set to DISABLED, to get rid of the various freezes in Modern Standby, combined with third setting described hereafter
 
-3. Third settings concerns policy for devices in low power state.\
-   Windows uses 2 different policies for devices in Modern Standby:
-   - A policy named: "Performance". Set by default in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
-   - A policy named: "Power saving". Set by default in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
+Third setting concerns policy for devices in low power state.
 
-   **To get good stability in Modern Standby, the policy for AC needs to be set to "Power saving"**
+Windows uses 2 different policies for devices in Modern Standby:
+- A policy named: "Performance". Set by default in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
+- A policy named: "Power saving". Set by default in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
 
-   This can be easily configurerd by command line, for the current account.
+**To get good stability in Modern Standby, the policy for AC needs to be set to "Power saving"**
 
-   Use a simple terminal window (NOT admin) to enter some powercfg commands:
+This can be easily configurerd by command line, for the current account.
+
+Use a simple terminal window (NOT admin) to enter some powercfg commands:
 
 <img width="1101" height="507" alt="image" src="https://github.com/user-attachments/assets/0f09d5b9-423e-4f83-9de8-5083eec6b87c" />
 
