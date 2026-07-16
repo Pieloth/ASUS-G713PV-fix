@@ -3,19 +3,13 @@
 > [!IMPORTANT]
 > **IMPORTANT INFORMATION FIRST**
 >
-> With:
-> - Win 11 25H2
-> - AsMedia 4242 chip Firmware 4.0.0.13 update, available from [www.station-drivers.com](https://www.station-drivers.com/index.php/fr/component/remository/Drivers/Asmedia/ASM-1x4x-2x4x-314x2-3242-4242--...--and--107x-2074-USB-3.x--and--USB-4.x-Controllers/Firmwares/ASM-4242-USB-4-Controller/Asmedia-ASM-4242-%28USB-4.0%29-Firmware-Version-1.02.22.00.00.11/lang,fr-fr/)
-> - A few Windows 11 settings
-> - A bunch of driver updates, with an important one, Mediatek Bluetooth, to avoid some Random Reboots
->
-> All issues are now fixed (see details below)
+> All following issues are fixed (see details below)
 >
 > - Flickers fixed
-> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed
+> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed. This requires a tweak on NVidia HD Audio driver, causing freezes in some situations
 > - Black logon screen fixed by a simple tweak
 > - Enhance the Modern Standby experience to be closer to former S3 standby
-> - Stop Random Reboot situation, due to the Mediatek Bluetooth driver
+> - Random Reboot situation
 > 
 A few Windows 11 settings tweaks in order to fix all ASUS G713PV, G713PI laptop unstabilities.
 
@@ -25,45 +19,13 @@ Possibly works on other models from the same brand or product range too, like G7
 
 ## Freeze on various Modern Standby combined situations workaround, black logon screen workaround, and better standby/sleep
 
-Many issues combining Modern Standby with Hibernate or Fast Startup, can be fixed by a simple tweak in Windows settings 
-Note that the 3 tweaks/settings described below are necassary alltogether to insure stability
+Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by a Nvidia HD Audio driver tweak 
 
-First 2 settings are set in Windows settings: [Accounts -> Sign-in options](ms-settings:signinoptions):
+First setting in Windows settings: [Accounts -> Sign-in options](ms-settings:signinoptions):
 
 <img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
 
 1. Option to sign-in each time after you've been away: Set to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
-2. Option to use connection info to finish configuration after update: Set to DISABLED, to get rid of the various freezes in Modern Standby, combined with third setting described hereafter
-
-Third setting concerns policy for devices in low power state.
-
-Windows uses 2 different policies for devices in Modern Standby:
-- A policy named: "Performance". Set by default in AC power mode, it keeps the computer awake much longer time before getting into DRIPS state
-- A policy named: "Power saving". Set by default in DC power mode, more aggressive, manages the computer to go faster into DRIPS state
-
-**To get good stability in Modern Standby, the policy for AC needs to be set to "Power saving"**
-
-This can be easily configurerd by command line, for the current account.
-
-Use a simple terminal window (NOT admin) to enter some powercfg commands:
-
-<img width="1101" height="507" alt="image" src="https://github.com/user-attachments/assets/0f09d5b9-423e-4f83-9de8-5083eec6b87c" />
-
-   1. This first command will set the AC power mode standby policy to use the "Power saving" policy\
-      `powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_NONE DEVICEIDLE 1`
-
-   2. this second will display the current policies in use. "Power saving" is 1, Performance is 0\
-      `powercfg /qh SCHEME_CURRENT SUB_NONE DEVICEIDLE`
-
-Not sure about this, but those settings hide probably a misbehavior of Windows, to communicate properly with the TPM 2.0 chip in order to retreive a connection token, while Windows is in Modern Standby, but not in DRIPS state. 
-
-At certain moment, Windows will request to reconnect to the session. 
-
-It turns out that if the laptop has been started after a hibernate or in Fast Startup mode, the TPM chip is not properly initialized, and leads to freezing situations, when laptop goes to Modern Standby afterwards, and Windows requests a reconnexion token to the TPM chip.
-
-Cannot state if this is a BIOS, Windows, or AMD TPM driver issue, but something wrong in here
-
-This set of 3 workarounds work fine for me
 
 > [!NOTE]
 > DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
@@ -102,27 +64,24 @@ There's a more recent version of this Firmware available here: [www.station-driv
 This latest version makes use of USB-C ports more stable than with Asus firmware version (outdated)
 
 2. **AMD Chipset and driver**\
-Latest Adrenalin 25.12.1 with its associated chipset 7.11.26.2142 works fine
+Latest Adrenalin 26.6.4 with its associated chipset 8.05.04.516 works fine
 
 3. **nVidia GPU driver**\
-Version 581.80 of the driver is recent and works well. More recent are less stable => keeping this one
-
-4. **Mediatek Bluetooth Driver**
+Latest version 610.74 is recent and works well.
 > [!IMPORTANT]
-> This is an IMPORTANT update.
-> 
-> The Mediatek Bluetooth driver, is one source of Random Reboots (sudden power off then power on) of the laptop
-> 
-> The Mediatek Wifi/Bluetooth card uses USB for the Bluetooth section, and PCIe for Wifi section.
-> 
-Most stable version for the Mediatek Bluetooth driver is: **1.1040.2.485**. \
-All others I've tested are candidate to trig a  _Random Reboot_  once a while, when using a Bluetooth device like mouse or Xbox gamepad\
-It is available from: [https://catalog.update.microsoft.com](https://catalog.update.microsoft.com/Search.aspx?q=1.1040.2.485)\
-Search for this version in the search bar and download a version for recent Windows 11\
-Check that your Mediatek card USB VID/PID is listed in the package. For instance, mine is USB VID/PID = 0489/E0F6\
-The file is a .cab, use 7zip to extract the files in a folder, then double clic on the .inf file it contains to install it\
-Check in the Device Manager, that the new driver is in place
- 
+> **FIX HD AUDIO DRIVER**
+>
+> NVIDIA HD Audio driver, currently 1.4.5.7, requires a tweak, otherwise, it will Freeze the PC when entering Modern Standby DRIPS
+>
+> This driver sets in Registry, a particular folder, PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
+> It is created in HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\XXXX\PowerSettings
+>
+> For whatever reason, this creates an instability with Windows
+>
+> The complete PowerSettings folder need to be removed
+>
+> The Python script proposed here can perform this action automatically
+
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
 Synthetic information relative to Modern Standby
