@@ -6,7 +6,8 @@
 > All following issues are fixed (see details below)
 >
 > - Flickers fixed
-> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed. This requires a tweak on NVidia HD Audio driver, causing freezes in some situations
+> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed.
+> - This requires a tweak on NVidia HD Audio driver, causing freezes in some situations. The Python script proposed can handle this tweak easily
 > - Black logon screen fixed by a simple tweak
 > - Enhance the Modern Standby experience to be closer to former S3 standby
 > - Random Reboot situation
