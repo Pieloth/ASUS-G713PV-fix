@@ -20,6 +20,8 @@ Possibly works on other models from the same brand or product range too, like G7
 
 Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by a Nvidia HD Audio driver tweak 
 
+See Below: **FIX HD AUDIO DRIVER**
+
 > [!NOTE]
 > DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
 > 
