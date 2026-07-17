@@ -18,8 +18,6 @@ So called Random reboots, sound cracklings, Fast Flickers, all those are now wip
 
 Possibly works on other models from the same brand or product range too, like G733P models for instance
 
-## Freeze on various Modern Standby combined situations workaround, black logon screen workaround, and better standby/sleep
-
 Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by a Nvidia HD Audio driver tweak 
 
 > [!NOTE]
