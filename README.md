@@ -22,12 +22,6 @@ Possibly works on other models from the same brand or product range too, like G7
 
 Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by a Nvidia HD Audio driver tweak 
 
-First setting in Windows settings: [Accounts -> Sign-in options](ms-settings:signinoptions):
-
-<img width="1021" height="1016" alt="image" src="https://github.com/user-attachments/assets/aa5f09e1-5575-4ba7-8664-f0309314d40a" />
-
-1. Option to sign-in each time after you've been away: Set to ALWAYS, instead of after a given timout, to get rid of the black logon screen 
-
 > [!NOTE]
 > DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
 > 
