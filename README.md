@@ -86,7 +86,7 @@ Or directly running the compiled .exe version :
 ```
 fix_nvidia_audio_v2.exe
 ```
-How to Compile the script to create .exe:
+How to Compile the script to create .exe, in a simple terminal window:
 ```
 pyinstaller --onefile .\fix_nvidia_audio_v2.py
 ```
