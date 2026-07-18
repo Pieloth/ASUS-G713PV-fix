@@ -78,6 +78,23 @@ All latest, version 610.74 recent and works well.
 >
 > The Python script proposed here can perform this action automatically
 
+Execute script in an Admin Terminal: 
+```
+python fix_nvidia_audio_v2.py
+```
+Or directly running the compiled .exe version : 
+```
+fix_nvidia_audio_v2.exe
+```
+How to Compile the script to create .exe:
+```
+pyinstaller --onefile .\fix_nvidia_audio_v2.py
+```
+A /v option can be used to show a popup on execution. 
+The .exe version can be used in a scheduled task to automatically scan and perform the needed action on reboot. 
+
+Create the scheduled task for System user, with all elevated rights.
+
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
 Synthetic information relative to Modern Standby
