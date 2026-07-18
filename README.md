@@ -70,13 +70,17 @@ All latest, version 610.74 recent and works well.
 > NVIDIA HD Audio driver, currently 1.4.5.7, requires a tweak, otherwise, it will Freeze the PC when entering Modern Standby DRIPS
 >
 > This driver sets in Registry, a particular folder, PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
-> It is created in HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\XXXX\PowerSettings
+> 
+> It is created in this folder. Note `<XXXX>` is numbered by Windows:
+> ```
+> HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\<XXXX>\PowerSettings
+> ```
 >
 > For whatever reason, this creates an instability with Windows
 >
-> The complete PowerSettings folder need to be removed
+> The complete PowerSettings folder need to be removed. Safe, as this folder is recreated each time the driver is installed.
 >
-> The Python script proposed here can perform this action automatically
+> The Python script proposed here simply locates and removes this folder automatically
 
 Execute script in an Admin Terminal: 
 ```
@@ -90,7 +94,8 @@ How to Compile the script to create .exe, in a simple terminal window:
 ```
 pyinstaller --onefile .\fix_nvidia_audio_v2.py
 ```
-A /v option can be used to show a popup on execution. 
+A `/v` option can be used in command line to show a popup on execution. 
+
 The .exe version can be used in a scheduled task to automatically scan and perform the needed action on reboot. 
 
 Create the scheduled task for System user, with all elevated rights.
