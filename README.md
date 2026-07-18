@@ -7,12 +7,12 @@
 >
 > - Flickers fixed
 > - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed.
-> - This requires a tweak on NVidia HD Audio driver, causing freezes in some situations. The Python script proposed can handle this tweak easily
-> - Black logon screen fixed by a simple tweak
+> - Black logon screen fixed, no random reboot anymore
 > - Enhance the Modern Standby experience to be closer to former S3 standby
-> - Random Reboot situation
 > 
-A few Windows 11 settings tweaks in order to fix all ASUS G713PV, G713PI laptop unstabilities.
+> A tweak of NVidia HD Audio driver is needed to achieve this: Remove the PowerSettings key subfolder of this driver in Registry
+>
+> The Python script proposed in this repo executes this tweak easily
 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
 
@@ -59,10 +59,11 @@ There's a more recent version of this Firmware available here: [www.station-driv
 This latest version makes use of USB-C ports more stable than with Asus firmware version (outdated)
 
 2. **AMD Chipset and driver**\
-Latest Adrenalin 26.6.4 with its associated chipset 8.05.04.516 works fine
+All latest, Adrenalin 26.6.4 with its associated chipset 8.05.04.516 works fine
 
 3. **nVidia GPU driver**\
-Latest version 610.74 is recent and works well.
+All latest, version 610.74 recent and works well.
+
 > [!IMPORTANT]
 > **FIX HD AUDIO DRIVER**
 >
@@ -86,6 +87,8 @@ Concerns Media devices Idle timeout settings
 Concerns Kernel device drivers Idle timeout management
 4. [Microsoft learn - Allow networking during standby](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-allow-networking-during-standby)
 Concerns about Connectivity in standby, for Modern Standby. Deprecated, but turns out it is still in use.
+5. [Audio Device Class Inactivity Timer Implementation](https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/audio-device-class-inactivity-timer-implementation)
+Explanations about PowerSettings (conservationidletime, idlepowerstate, performanceidletime) for driver devices
   
 
 
