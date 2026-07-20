@@ -4,29 +4,38 @@ import ctypes
 import argparse
 import winreg
 
-# Configuration de la recherche (Antislashs doublés pour éviter tout warning de syntaxe)
+# Configuration: Add any target drivers to this list (Case-Insensitive)
+TARGET_DRIVERS = [
+    "nVidia High Definition Audio",
+    "AMD Streaming Audio Device"
+]
+
+# Base Search Path (Double backslashes prevent syntax warnings)
 CLASS_KEY_PATH = "SYSTEM\\CurrentControlSet\\Control\\Class"
-TARGET_DRIVER_NAME = "nVidia High Definition Audio"
 
 def is_admin():
-    """Vérifie si le script est exécuté avec les privilèges d'administrateur."""
+    """Checks if the script is running with administrator privileges."""
     try:
         return ctypes.windll.shell32.IsUserAnAdmin() != 0
     except:
         return False
 
 def show_popup(title, message):
-    """Affiche un popup d'information natif Windows."""
+    """Displays a native Windows information popup dialog."""
+    # 0x40 = MB_OK | MB_ICONINFORMATION
     ctypes.windll.user32.MessageBoxW(0, message, title, 0x40)
 
-def find_nvidia_audio_power_settings():
+def find_all_power_settings_paths():
     r"""
-    Parcourt les sous-clés de HKLM\SYSTEM\CurrentControlSet\Control\Class
-    à la recherche du driver 'nVidia High Definition Audio' (insensible à la casse)
-    et retourne le chemin de sa sous-clé 'PowerSettings'.
+    Iterates through the subkeys of HKLM\SYSTEM\CurrentControlSet\Control\Class.
+    Maps matches to the lowercase version of the drivers listed in TARGET_DRIVERS.
+    Returns a dictionary of {driver_name: power_settings_registry_path_or_None}.
     """
+    # Initialize all targets as None
+    results = {driver.lower(): None for driver in TARGET_DRIVERS}
+    drivers_to_find = [d.lower() for d in TARGET_DRIVERS]
+
     try:
-        # Ouverture avec des antislashs valides pour l'API Windows Registry
         class_key = winreg.OpenKey(
             winreg.HKEY_LOCAL_MACHINE, 
             CLASS_KEY_PATH, 
@@ -34,8 +43,8 @@ def find_nvidia_audio_power_settings():
             winreg.KEY_READ | winreg.KEY_WOW64_64KEY
         )
     except OSError as e:
-        print(f"[-] Impossible d'ouvrir la clé Class : {e}")
-        return None
+        print(f"[-] Unable to open the Class key: {e}")
+        return {}
 
     i = 0
     while True:
@@ -65,10 +74,11 @@ def find_nvidia_audio_power_settings():
                         driver_desc, _ = winreg.QueryValueEx(driver_key, "DriverDesc")
                         driver_key.Close()
                         
-                        if str(driver_desc).lower() == TARGET_DRIVER_NAME.lower():
+                        desc_lower = str(driver_desc).lower()
+                        if desc_lower in drivers_to_find:
                             power_settings_path = f"{driver_path}\\PowerSettings"
                             try:
-                                # Test de présence de PowerSettings
+                                # Test if PowerSettings subkey physically exists
                                 ps_key = winreg.OpenKey(
                                     winreg.HKEY_LOCAL_MACHINE, 
                                     power_settings_path, 
@@ -76,10 +86,10 @@ def find_nvidia_audio_power_settings():
                                     winreg.KEY_READ | winreg.KEY_WOW64_64KEY
                                 )
                                 ps_key.Close()
-                                class_key.Close()
-                                sub_key.Close()
-                                return power_settings_path
+                                # Store the path matching the lowercase configuration item
+                                results[desc_lower] = power_settings_path
                             except OSError:
+                                # Found the driver, but PowerSettings is missing/already deleted
                                 pass
                     except OSError:
                         pass
@@ -93,14 +103,13 @@ def find_nvidia_audio_power_settings():
             break
 
     class_key.Close()
-    return None
+    return results
 
 def delete_power_settings(power_settings_path):
     """
-    Supprime de façon sécurisée la clé de registre PowerSettings.
+    Safely deletes the target PowerSettings registry key.
     """
     try:
-        # Séparation du chemin avec l'antislash
         parent_path, key_to_delete = power_settings_path.rsplit('\\', 1)
         
         parent_key = winreg.OpenKey(
@@ -110,51 +119,59 @@ def delete_power_settings(power_settings_path):
             winreg.KEY_WRITE | winreg.KEY_WOW64_64KEY
         )
         
-        # Suppression de la sous-clé PowerSettings
         winreg.DeleteKey(parent_key, key_to_delete)
         parent_key.Close()
         return True
     except OSError as e:
-        print(f"[-] Erreur lors de la suppression de la clé : {e}")
+        print(f"[-] Error occurred while deleting the key: {e}")
         return False
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Désactivation des restrictions d'alimentation NVIDIA HD Audio pour Modern Standby.",
+        description="Disable targeted audio device power restrictions to fix Modern Standby bugs.",
         prefix_chars='/-'
     )
-    
-    parser.add_argument('/v', action='store_true', help="Affiche un popup si des modifications ont été apportées.")
+    parser.add_argument('/v', action='store_true', help="Display a summary popup notification after processing.")
     args = parser.parse_args()
 
     if not is_admin():
-        print("[!] Erreur : Ce script doit être exécuté en tant qu'Administrateur.")
+        print("[!] Error: This script must be run as an Administrator.")
         sys.exit(1)
 
-    print("[*] Recherche de la clé active pour 'nVidia High Definition Audio'...")
-    power_settings_path = find_nvidia_audio_power_settings()
+    print("[*] Scanning Registry Class configurations for matching target drivers...")
+    found_paths = find_all_power_settings_paths()
 
-    if not power_settings_path:
-        print("[-] Le répertoire 'PowerSettings' de l'audio nVidia est introuvable ou déjà supprimé.")
-        if args.v:
-            show_popup(
-                "Statut NVIDIA PowerSettings", 
-                "Aucune action requise :\nLe répertoire 'PowerSettings' n'existe pas ou a déjà été supprimé."
-            )
-        sys.exit(0)
-
-    print(f"[+] Clé détectée : HKLM\\{power_settings_path}")
+    popup_messages = []
     
-    # Tentative de suppression
-    success = delete_power_settings(power_settings_path)
+    print("-" * 60)
+    # Loop through the list of targets to process them sequentially
+    for driver in TARGET_DRIVERS:
+        driver_lower = driver.lower()
+        path = found_paths.get(driver_lower)
 
-    if success:
-        log_msg = "Le répertoire 'PowerSettings' associé à l'audio nVidia a été supprimé avec succès."
-        print(f"[+] {log_msg}")
-        if args.v:
-            show_popup("Registre NVIDIA mis à jour", log_msg)
-    else:
-        print("[-] Échec de la suppression de la clé de registre.")
+        print(f"[*] Processing: {driver}")
+        
+        if not path:
+            msg = "No 'PowerSettings' key found (already deleted or absent)."
+            print(f"[-] {msg}")
+            popup_messages.append(f"• {driver}:\n  {msg}")
+        else:
+            print(f"[+] Key detected: HKLM\\{path}")
+            success = delete_power_settings(path)
+            if success:
+                msg = "The 'PowerSettings' directory was successfully deleted."
+                print(f"[+] {msg}")
+                popup_messages.append(f"• {driver}:\n  {msg}")
+            else:
+                msg = "Failed to delete the registry key."
+                print(f"[-] {msg}")
+                popup_messages.append(f"• {driver}:\n  {msg}")
+        print("-" * 60)
+
+    # If verbose switch is enabled, showcase all collected outcomes in one unified window
+    if args.v:
+        summary_message = "Execution Status Report:\n\n" + "\n\n".join(popup_messages)
+        show_popup("Modern Standby Registry Fixer", summary_message)
 
 if __name__ == "__main__":
     main()
