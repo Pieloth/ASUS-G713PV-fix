@@ -67,20 +67,24 @@ All latest, version 610.74 recent and works well.
 > [!IMPORTANT]
 > **FIX HD AUDIO DRIVER**
 >
-> NVIDIA HD Audio driver, currently 1.4.5.7, requires a tweak, otherwise, it will Freeze the PC when entering Modern Standby DRIPS
->
-> This driver sets in Registry, a particular folder, PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
+> - NVIDIA HD Audio driver (currently 1.4.5.7)
+> - AMD Streaming Audio driver
+> - Realtek HD Audio driver
 > 
-> It is created in this folder. Note `<XXXX>` is numbered by Windows:
+> all requires a Power settings tweak, otherwise, they might Freeze the PC when entering Modern Standby DRIPS
+>
+> These driver sets in Registry, a particular custom folder for energy savings: PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
+> 
+> They are created in this folder. Note `<XXXX>` is numbered by Windows:
 > ```
 > HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\<XXXX>\PowerSettings
 > ```
 >
-> For whatever reason, this creates an instability with Windows
+> Probably due to BIOS (336) ACPI bug, this creates an instability with Windows
 >
-> The complete PowerSettings folder need to be removed. Safe, as this folder is recreated each time the driver is installed.
+> The complete PowerSettings folder is to be removed, forcing default Windows settings. Safe, as this folder can be recreated each time the driver is installed.
 >
-> The Python script proposed here simply locates and removes this folder automatically
+> The Python script available here simply locates and removes these PowerSettings folders automatically for the abovementionned Media drivers
 
 Execute script in an Admin Terminal: 
 ```
