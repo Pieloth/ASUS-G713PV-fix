@@ -7,7 +7,8 @@ import winreg
 # Configuration: Add any target drivers to this list (Case-Insensitive)
 TARGET_DRIVERS = [
     "nVidia High Definition Audio",
-    "AMD Streaming Audio Device"
+    "AMD Streaming Audio Device",
+    "Realtek High Definition Audio"
 ]
 
 # Base Search Path (Double backslashes prevent syntax warnings)
@@ -136,7 +137,7 @@ def main():
 
     if not is_admin():
         print("[!] Error: This script must be run as an Administrator.")
-        sys.exit(1)
+        #sys.exit(1)
 
     print("[*] Scanning Registry Class configurations for matching target drivers...")
     found_paths = find_all_power_settings_paths()
