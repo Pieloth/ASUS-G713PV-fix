@@ -10,7 +10,7 @@
 > - Black logon screen fixed, no random reboot anymore
 > - Enhance the Modern Standby experience to be closer to former S3 standby
 > 
-> A tweak of NVidia HD Audio driver is needed to achieve this: Remove the PowerSettings key subfolder of this driver in Registry
+> A tweak of Media drivers: NVidia HD Audio, AMD Streaming, Realtek HD Audio drivers is needed to achieve this: Remove the PowerSettings key subfolder of these drivers in Registry
 >
 > The Python script proposed in this repo executes this tweak easily
 
