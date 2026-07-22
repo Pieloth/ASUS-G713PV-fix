@@ -10,9 +10,16 @@
 > - Black logon screen fixed, no random reboot anymore
 > - Enhance the Modern Standby experience to be closer to former S3 standby
 > 
-> A tweak of Media drivers: NVidia HD Audio, AMD Streaming, Realtek HD Audio drivers is needed to achieve this: Remove the PowerSettings key subfolder of these drivers in Registry
+> A tweak of Media drivers:
+> - NVidia HD Audio
+> - AMD Streaming
+> - Realtek HD Audio
 >
-> The Python script proposed in this repo executes this tweak easily
+> is needed to achieve this: Remove the PowerSettings key subfolder of these drivers in Registry
+>
+> The Python script proposed in this repo executes this tweak easily.
+>
+> This script is to be executed at each boot (using Task Scheduler) because Realtek driver recreates the subkeys at each boot.
 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
 
@@ -85,6 +92,10 @@ All latest, version 610.74 recent and works well.
 > The complete PowerSettings folder is to be removed, forcing default Windows settings. Safe, as this folder can be recreated each time the driver is installed.
 >
 > The Python script available here simply locates and removes these PowerSettings folders automatically for the abovementionned Media drivers
+>
+> The script is to be run at each boot, using a Task Scheduler task, as the Realtek driver recreates its keys at each reboot
+>
+> Simply create a System user with elevated rights scheduled task, triggered at each boot.
 
 Execute script in an Admin Terminal: 
 ```
