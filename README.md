@@ -3,11 +3,11 @@
 > [!NOTE]
 >
 > USAGE\
-> You can run the script in an admin console if just run once. Note that a Task will be created in Task Scheduler\
+> You can run the script in a console if just run once, it will ask for UAC privilege if non admin. Note that a Task will be created in Task Scheduler\
 > To use it with the Task Scheduler, to be run at each reboot, place the .exe in some folder, and run once the .exe . It will be runned at each reboot from this location.\
 > If the location changes, it will automatically update the location
 >
-> - To run in Admin terminal console: just execute script in an Admin Terminal: 
+> - To run in a terminal console: just execute script in a Terminal (if not admin, will ask for UAC privilege): 
 > ```
 > python fix_media_powersettings.py
 > ```
@@ -93,7 +93,7 @@ All latest, Adrenalin 26.6.4 with its associated chipset 8.05.04.516 works fine
 All latest, version 610.74 recent and works well.
 
 > [!IMPORTANT]
-> **FIX HD AUDIO DRIVER**
+> **WORKAROUND TO FIX HD AUDIO DRIVERS DUE TO BIOS ACPI bug**
 >
 > - NVIDIA HD Audio driver (currently 1.4.5.7)
 > - AMD Streaming Audio driver
@@ -116,7 +116,7 @@ All latest, version 610.74 recent and works well.
 >
 > The script is to be run at each boot. A Task Scheduler task is set automatically as System user with privileges, as the Realtek driver recreates its keys at each reboot
 
-Execute script in an Admin Terminal: 
+Execute script in a Terminal: 
 ```
 python fix_media_powersettings.py
 ```
@@ -130,9 +130,9 @@ pyinstaller --onefile .\fix_media_powersettings.py
 ```
 A `/v` option can be used in command line to show a popup on execution. 
 
-The .exe version can be used in a scheduled task to automatically scan and perform the needed action on reboot. 
+The .exe version is used in a scheduled task to automatically scan and perform the needed action on reboot. 
 
-Create the scheduled task for System user, with all elevated rights.
+It creates automatically the scheduled task for System user, with all elevated rights.
 
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
