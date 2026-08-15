@@ -4,12 +4,29 @@ import ctypes
 import argparse
 import winreg
 
+# Version Identifier
+VERSION = "1.4.0"
+
+# Requires: pip install pywin32
+try:
+    import win32com.client
+except ImportError:
+    win32com = None
+
 # Configuration: Add any target drivers to this list (Case-Insensitive)
 TARGET_DRIVERS = [
     "nVidia High Definition Audio",
     "AMD Streaming Audio Device",
     "Realtek High Definition Audio"
 ]
+
+# Task Scheduler Configuration
+TASK_NAME = "fix_media_powersettings"
+TASK_DESCRIPTION = (
+    "Compiled Python script to remove Media class PowerSettings subkeys in "
+    "registry for nVidia, AMD, and Realtek drivers, due to ACPI malfunction in "
+    "Asus BIOS leading to PC freeze in Modern Standby"
+)
 
 # Base Search Path (Double backslashes prevent syntax warnings)
 CLASS_KEY_PATH = "SYSTEM\\CurrentControlSet\\Control\\Class"
@@ -26,13 +43,112 @@ def show_popup(title, message):
     # 0x40 = MB_OK | MB_ICONINFORMATION
     ctypes.windll.user32.MessageBoxW(0, message, title, 0x40)
 
+def get_current_executable_path():
+    """
+    Returns the absolute path to the current running executable/script.
+    Handles both standalone compiled .exe (PyInstaller) and standard .py execution.
+    """
+    if getattr(sys, 'frozen', False):
+        return os.path.abspath(sys.executable)
+    else:
+        return os.path.abspath(sys.argv[0])
+
+def create_or_update_scheduled_task_com():
+    """
+    Creates or updates the scheduled task using pywin32 (Schedule.Service COM API).
+    Detects path changes and updates the task definition accordingly.
+    """
+    if win32com is None:
+        return "Error: 'pywin32' library is not installed (run 'pip install pywin32')."
+
+    current_exe = get_current_executable_path()
+
+    # Task Scheduler Constants
+    TASK_TRIGGER_BOOT = 8
+    TASK_ACTION_EXEC = 0
+    TASK_CREATE_OR_UPDATE = 6
+    TASK_LOGON_SERVICE_ACCOUNT = 5
+    TASK_RUNLEVEL_HIGHEST = 1
+
+    try:
+        scheduler = win32com.client.Dispatch("Schedule.Service")
+        scheduler.Connect()
+        root_folder = scheduler.GetFolder("\\")
+
+        # Check existing task command path
+        existing_command = None
+        try:
+            existing_task = root_folder.GetTask(TASK_NAME)
+            task_def = existing_task.Definition
+            for action in task_def.Actions:
+                if action.Type == TASK_ACTION_EXEC:
+                    existing_command = action.Path
+                    break
+        except Exception:
+            # Task does not exist yet
+            pass
+
+        if existing_command:
+            if os.path.normpath(existing_command).lower() == os.path.normpath(current_exe).lower():
+                return "Task exists and points to current executable path. No changes needed."
+            else:
+                print(f"[*] Executable location change detected.")
+                print(f"    Previous path: {existing_command}")
+                print(f"    Current path:  {current_exe}")
+                action_status = f"Updated task path from '{existing_command}' to '{current_exe}'."
+        else:
+            action_status = f"Task created successfully for '{current_exe}'."
+
+        # Create new task definition
+        task_def = scheduler.NewTask(0)
+
+        # 1. Registration Info
+        task_def.RegistrationInfo.Description = TASK_DESCRIPTION
+
+        # 2. Settings
+        settings = task_def.Settings
+        settings.Enabled = True
+        settings.StartWhenAvailable = False
+        settings.DisallowStartIfOnBatteries = False
+        settings.StopIfGoingOnBatteries = False
+        settings.AllowHardTerminate = True
+        settings.ExecutionTimeLimit = "PT72H"
+        settings.Priority = 7
+
+        # 3. Trigger (At Startup)
+        trigger = task_def.Triggers.Create(TASK_TRIGGER_BOOT)
+        trigger.Enabled = True
+
+        # 4. Action (Execute binary)
+        action = task_def.Actions.Create(TASK_ACTION_EXEC)
+        action.Path = current_exe
+
+        # 5. Principal (SYSTEM Account with Highest Privileges)
+        principal = task_def.Principal
+        principal.UserId = "S-1-5-18"  # Local SYSTEM account
+        principal.RunLevel = TASK_RUNLEVEL_HIGHEST
+
+        # Register task (Create or overwrite)
+        root_folder.RegisterTaskDefinition(
+            TASK_NAME,
+            task_def,
+            TASK_CREATE_OR_UPDATE,
+            None,  # User (None for SYSTEM)
+            None,  # Password
+            TASK_LOGON_SERVICE_ACCOUNT
+        )
+
+        return action_status
+
+    except Exception as e:
+        return f"Failed to configure task via COM API: {str(e)}"
+
 def find_all_power_settings_paths():
     r"""
     Iterates through the subkeys of HKLM\SYSTEM\CurrentControlSet\Control\Class.
     Maps matches to the lowercase version of the drivers listed in TARGET_DRIVERS.
     Returns a dictionary of {driver_name: power_settings_registry_path_or_None}.
     """
-    # Initialize all targets as None
     results = {driver.lower(): None for driver in TARGET_DRIVERS}
     drivers_to_find = [d.lower() for d in TARGET_DRIVERS]
 
@@ -79,7 +195,6 @@ def find_all_power_settings_paths():
                         if desc_lower in drivers_to_find:
                             power_settings_path = f"{driver_path}\\PowerSettings"
                             try:
-                                # Test if PowerSettings subkey physically exists
                                 ps_key = winreg.OpenKey(
                                     winreg.HKEY_LOCAL_MACHINE, 
                                     power_settings_path, 
@@ -87,10 +202,8 @@ def find_all_power_settings_paths():
                                     winreg.KEY_READ | winreg.KEY_WOW64_64KEY
                                 )
                                 ps_key.Close()
-                                # Store the path matching the lowercase configuration item
                                 results[desc_lower] = power_settings_path
                             except OSError:
-                                # Found the driver, but PowerSettings is missing/already deleted
                                 pass
                     except OSError:
                         pass
@@ -129,23 +242,32 @@ def delete_power_settings(power_settings_path):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Disable targeted audio device power restrictions to fix Modern Standby bugs.",
+        description=f"Disable targeted audio device power restrictions to fix Modern Standby bugs (v{VERSION}).",
         prefix_chars='/-'
     )
     parser.add_argument('/v', action='store_true', help="Display a summary popup notification after processing.")
     args = parser.parse_args()
 
+    # Display initial version banner before any execution
+    print(f"=== Modern Standby Registry Fixer v{VERSION} ===")
+
     if not is_admin():
         print("[!] Error: This script must be run as an Administrator.")
-        #sys.exit(1)
+        sys.exit(1)
 
+    popup_messages = []
+
+    # --- PART 1: Task Scheduler Management (via pywin32 COM) ---
+    print("[*] Checking Windows Task Scheduler configuration via COM API...")
+    task_status = create_or_update_scheduled_task_com()
+    print(f"[+] Task Scheduler Status: {task_status}")
+    popup_messages.append(f"• Scheduled Task Status:\n  {task_status}")
+
+    # --- PART 2: Registry Processing ---
+    print("-" * 60)
     print("[*] Scanning Registry Class configurations for matching target drivers...")
     found_paths = find_all_power_settings_paths()
 
-    popup_messages = []
-    
-    print("-" * 60)
-    # Loop through the list of targets to process them sequentially
     for driver in TARGET_DRIVERS:
         driver_lower = driver.lower()
         path = found_paths.get(driver_lower)
@@ -169,10 +291,10 @@ def main():
                 popup_messages.append(f"• {driver}:\n  {msg}")
         print("-" * 60)
 
-    # If verbose switch is enabled, showcase all collected outcomes in one unified window
+    # --- PART 3: Summary Display ---
     if args.v:
-        summary_message = "Execution Status Report:\n\n" + "\n\n".join(popup_messages)
-        show_popup("Modern Standby Registry Fixer", summary_message)
+        summary_message = f"Execution Status Report (v{VERSION}):\n\n" + "\n\n".join(popup_messages)
+        show_popup(f"Modern Standby Registry Fixer v{VERSION}", summary_message)
 
 if __name__ == "__main__":
     main()
