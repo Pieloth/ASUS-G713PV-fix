@@ -1,4 +1,4 @@
-# ASUS_G713PV_fix - Final status
+# ASUS_G713PV_fix - Latest findings and Workaround 
 
 > [!NOTE]
 >
