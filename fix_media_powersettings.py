@@ -5,7 +5,10 @@ import argparse
 import winreg
 
 # Version Identifier
-VERSION = "1.5.0"
+VERSION = "1.7.0"
+
+# Maximum Log File Size in Bytes (512 KB)
+MAX_LOG_SIZE_BYTES = 512 * 1024
 
 # Requires: pip install pywin32
 try:
@@ -30,6 +33,38 @@ TASK_DESCRIPTION = (
 
 # Base Search Path (Double backslashes prevent syntax warnings)
 CLASS_KEY_PATH = "SYSTEM\\CurrentControlSet\\Control\\Class"
+
+class TeeLogger:
+    """
+    Redirects stdout/stderr to both the terminal console and a log file.
+    Rotates the log file into a .bak file if its size exceeds max_bytes.
+    """
+    def __init__(self, log_path, max_bytes=MAX_LOG_SIZE_BYTES):
+        self.terminal = sys.stdout
+        self._rotate_log_if_needed(log_path, max_bytes)
+        self.log_file = open(log_path, "a", encoding="utf-8")
+
+    def _rotate_log_if_needed(self, log_path, max_bytes):
+        """Rotates log file to log_path.bak if it exceeds max_bytes."""
+        if os.path.exists(log_path):
+            try:
+                if os.path.getsize(log_path) >= max_bytes:
+                    backup_path = log_path + ".bak"
+                    if os.path.exists(backup_path):
+                        os.remove(backup_path)
+                    os.rename(log_path, backup_path)
+            except Exception as e:
+                # Fallback if rotation fails (e.g. file lock issue)
+                pass
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log_file.write(message)
+        self.log_file.flush()
+
+    def flush(self):
+        self.terminal.flush()
+        self.log_file.flush()
 
 def is_admin():
     """Checks if the script is running with administrator privileges."""
@@ -272,13 +307,25 @@ def main():
     parser.add_argument('/v', action='store_true', help="Display a summary popup notification after processing.")
     args = parser.parse_args()
 
-    # Display initial version banner before any execution
-    print(f"=== Modern Standby Registry Fixer v{VERSION} ===")
-
     # Request UAC elevation if not already running as Administrator
     if not is_admin():
         print("[*] Administrator privileges required. Requesting UAC elevation...")
         elevate_privileges()
+
+    # Setup Logging to file (<script_name>.log) and console with size limit
+    current_exe = get_current_executable_path()
+    log_path = os.path.splitext(current_exe)[0] + ".log"
+    
+    try:
+        logger = TeeLogger(log_path, max_bytes=MAX_LOG_SIZE_BYTES)
+        sys.stdout = logger
+        sys.stderr = logger
+    except Exception as e:
+        print(f"[!] Warning: Could not initialize log file '{log_path}': {e}")
+
+    # Display initial version banner
+    print(f"=== Modern Standby Registry Fixer v{VERSION} ===")
+    print(f"[*] Logging output to: {log_path} (Max size: {MAX_LOG_SIZE_BYTES // 1024} KB)")
 
     popup_messages = []
 
