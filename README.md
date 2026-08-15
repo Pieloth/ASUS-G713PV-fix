@@ -3,9 +3,10 @@
 > [!NOTE]
 >
 > USAGE\
-> You can run the script in a console if just run once, it will ask for UAC privilege if non admin. Note that a Task will be created in Task Scheduler\
+> You can run the script in a console or from the File Explorer if just run once, it will ask for UAC privilege if non admin. Note that a Task will be created in Task Scheduler\
 > To use it with the Task Scheduler, to be run at each reboot, place the .exe in some folder, and run once the .exe . It will be runned at each reboot from this location.\
-> If the location changes, it will automatically update the location
+> If the location of the file changes, the script will automatically update the scheduler task location
+> A TeeLogger file is updated at each run, it stands in same folder as the .exe or script
 >
 > - To run in a terminal console: just execute script in a Terminal (if not admin, will ask for UAC privilege): 
 > ```
