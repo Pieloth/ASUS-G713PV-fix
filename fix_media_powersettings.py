@@ -5,7 +5,7 @@ import argparse
 import winreg
 
 # Version Identifier
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 
 # Requires: pip install pywin32
 try:
@@ -37,6 +37,30 @@ def is_admin():
         return ctypes.windll.shell32.IsUserAnAdmin() != 0
     except:
         return False
+
+def elevate_privileges():
+    """
+    Relaunches the current script or executable with Administrator privileges (UAC prompt).
+    """
+    if getattr(sys, 'frozen', False):
+        # Executable compiled (PyInstaller / cx_Freeze)
+        executable = sys.executable
+        params = " ".join([f'"{arg}"' for arg in sys.argv[1:]])
+    else:
+        # Standard Python script (.py)
+        executable = sys.executable
+        script = os.path.abspath(sys.argv[0])
+        params = f'"{script}" ' + " ".join([f'"{arg}"' for arg in sys.argv[1:]])
+
+    # 1 = SW_SHOWNORMAL | "runas" triggers the Windows UAC elevation prompt
+    ret = ctypes.windll.shell32.ShellExecuteW(None, "runas", executable, params, None, 1)
+    
+    # HINSTANCE > 32 indicates successful process creation
+    if ret > 32:
+        sys.exit(0)
+    else:
+        print("[!] Elevation request was denied by the user or failed.")
+        sys.exit(1)
 
 def show_popup(title, message):
     """Displays a native Windows information popup dialog."""
@@ -251,9 +275,10 @@ def main():
     # Display initial version banner before any execution
     print(f"=== Modern Standby Registry Fixer v{VERSION} ===")
 
+    # Request UAC elevation if not already running as Administrator
     if not is_admin():
-        print("[!] Error: This script must be run as an Administrator.")
-        sys.exit(1)
+        print("[*] Administrator privileges required. Requesting UAC elevation...")
+        elevate_privileges()
 
     popup_messages = []
 
