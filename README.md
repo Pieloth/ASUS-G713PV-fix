@@ -1,5 +1,26 @@
 # ASUS_G713PV_fix - Final status
 
+> [!NOTE]
+>
+> USAGE\
+> You can run the script in an admin console if just run once. Note that a Task will be created in Task Scheduler\
+> To use it with the Task Scheduler, to be run at each reboot, place the .exe in some folder, and run once the .exe . It will be runned at each reboot from this location.\
+> If the location changes, it will automatically update the location
+>
+> - To run in Admin terminal console: just execute script in an Admin Terminal: 
+> ```
+> python fix_nvidia_audio_v2.py
+> ```
+> Or directly running the compiled .exe version : 
+> ```
+> fix_nvidia_audio_v2.exe
+> ```
+> - How to Compile the script to create .exe, in a simple terminal window:
+> ```
+> pyinstaller --onefile .\fix_nvidia_audio_v2.py
+> ```
+> A `/v` option can be used in command line to show a popup on execution. 
+
 > [!IMPORTANT]
 > **IMPORTANT INFORMATION FIRST**
 >
@@ -93,9 +114,7 @@ All latest, version 610.74 recent and works well.
 >
 > The Python script available here simply locates and removes these PowerSettings folders automatically for the abovementionned Media drivers
 >
-> The script is to be run at each boot, using a Task Scheduler task, as the Realtek driver recreates its keys at each reboot
->
-> Simply create a System user with elevated rights scheduled task, triggered at each boot.
+> The script is to be run at each boot. A Task Scheduler task is set automatically as System user with privileges, as the Realtek driver recreates its keys at each reboot
 
 Execute script in an Admin Terminal: 
 ```
