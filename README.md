@@ -9,15 +9,15 @@
 >
 > - To run in Admin terminal console: just execute script in an Admin Terminal: 
 > ```
-> python fix_nvidia_audio_v2.py
+> python fix_media_powersettings.py
 > ```
 > Or directly running the compiled .exe version : 
 > ```
-> fix_nvidia_audio_v2.exe
+> fix_media_powersettings.exe
 > ```
 > - How to Compile the script to create .exe, in a simple terminal window:
 > ```
-> pyinstaller --onefile .\fix_nvidia_audio_v2.py
+> pyinstaller --onefile .\fix_media_powersettings
 > ```
 > A `/v` option can be used in command line to show a popup on execution. 
 
@@ -118,15 +118,15 @@ All latest, version 610.74 recent and works well.
 
 Execute script in an Admin Terminal: 
 ```
-python fix_nvidia_audio_v2.py
+python fix_media_powersettings.py
 ```
 Or directly running the compiled .exe version : 
 ```
-fix_nvidia_audio_v2.exe
+fix_media_powersettings.exe
 ```
 How to Compile the script to create .exe, in a simple terminal window:
 ```
-pyinstaller --onefile .\fix_nvidia_audio_v2.py
+pyinstaller --onefile .\fix_media_powersettings.py
 ```
 A `/v` option can be used in command line to show a popup on execution. 
 
