@@ -6,7 +6,7 @@ import winreg
 from datetime import datetime
 
 # Version Identifier
-VERSION = "1.8.0"
+VERSION = "1.13.0"
 
 # Maximum Log File Size in Bytes (512 KB)
 MAX_LOG_SIZE_BYTES = 512 * 1024
@@ -29,7 +29,8 @@ TASK_NAME = "fix_media_powersettings"
 TASK_DESCRIPTION = (
     "Compiled Python script to remove Media class PowerSettings subkeys in "
     "registry for nVidia, AMD, and Realtek drivers, due to ACPI malfunction in "
-    "Asus BIOS leading to PC freeze in Modern Standby"
+    "Asus BIOS leading to PC freeze in Modern Standby. "
+    "Triggers on boot, Kernel-PnP driver binding (Event 410), and system wake (Event 1)."
 )
 
 # Base Search Path (Double backslashes prevent syntax warnings)
@@ -116,7 +117,7 @@ def get_current_executable_path():
 def create_or_update_scheduled_task_com():
     """
     Creates or updates the scheduled task using pywin32 (Schedule.Service COM API).
-    Detects path changes and updates the task definition accordingly.
+    Configures triggers for Boot, Kernel-PnP Driver Binding (Event 410), and System Wake (Event 1).
     """
     if win32com is None:
         return "Error: 'pywin32' library is not installed (run 'pip install pywin32')."
@@ -124,11 +125,24 @@ def create_or_update_scheduled_task_com():
     current_exe = get_current_executable_path()
 
     # Task Scheduler Constants
+    TASK_TRIGGER_EVENT = 0
     TASK_TRIGGER_BOOT = 8
     TASK_ACTION_EXEC = 0
     TASK_CREATE_OR_UPDATE = 6
     TASK_LOGON_SERVICE_ACCOUNT = 5
     TASK_RUNLEVEL_HIGHEST = 1
+
+    # XML Query listening specifically to Kernel-PnP Driver Binding (410) and System Wake (Power-Troubleshooter 1)
+    EVENT_SUBSCRIPTION_XML = (
+        '<QueryList>'
+        '  <Query Id="0" Path="Microsoft-Windows-Kernel-PnP/Configuration">'
+        '    <Select Path="Microsoft-Windows-Kernel-PnP/Configuration">* [System[EventID=410]]</Select>'
+        '  </Query>'
+        '  <Query Id="1" Path="System">'
+        '    <Select Path="System">*[System[Provider[@Name=\'Microsoft-Windows-Power-Troubleshooter\'] and EventID=1]]</Select>'
+        '  </Query>'
+        '</QueryList>'
+    )
 
     try:
         scheduler = win32com.client.Dispatch("Schedule.Service")
@@ -150,7 +164,7 @@ def create_or_update_scheduled_task_com():
 
         if existing_command:
             if os.path.normpath(existing_command).lower() == os.path.normpath(current_exe).lower():
-                return "Task exists and points to current executable path. No changes needed."
+                action_status = "Task exists and points to current path (Triggers updated to Kernel-PnP 410 & Wake Event 1)."
             else:
                 print(f"[*] Executable location change detected.")
                 print(f"    Previous path: {existing_command}")
@@ -175,15 +189,20 @@ def create_or_update_scheduled_task_com():
         settings.ExecutionTimeLimit = "PT72H"
         settings.Priority = 7
 
-        # 3. Trigger (At Startup)
-        trigger = task_def.Triggers.Create(TASK_TRIGGER_BOOT)
-        trigger.Enabled = True
+        # 3. Trigger 1: At Startup
+        boot_trigger = task_def.Triggers.Create(TASK_TRIGGER_BOOT)
+        boot_trigger.Enabled = True
 
-        # 4. Action (Execute binary)
+        # 4. Trigger 2: On Kernel-PnP Driver Binding (410) & System Wake (1)
+        event_trigger = task_def.Triggers.Create(TASK_TRIGGER_EVENT)
+        event_trigger.Enabled = True
+        event_trigger.Subscription = EVENT_SUBSCRIPTION_XML
+
+        # 5. Action (Execute binary)
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.Path = current_exe
 
-        # 5. Principal (SYSTEM Account with Highest Privileges)
+        # 6. Principal (SYSTEM Account with Highest Privileges)
         principal = task_def.Principal
         principal.UserId = "S-1-5-18"  # Local SYSTEM account
         principal.RunLevel = TASK_RUNLEVEL_HIGHEST
