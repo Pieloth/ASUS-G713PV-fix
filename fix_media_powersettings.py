@@ -3,9 +3,10 @@ import sys
 import ctypes
 import argparse
 import winreg
+from datetime import datetime
 
 # Version Identifier
-VERSION = "1.7.0"
+VERSION = "1.8.0"
 
 # Maximum Log File Size in Bytes (512 KB)
 MAX_LOG_SIZE_BYTES = 512 * 1024
@@ -53,7 +54,7 @@ class TeeLogger:
                     if os.path.exists(backup_path):
                         os.remove(backup_path)
                     os.rename(log_path, backup_path)
-            except Exception as e:
+            except Exception:
                 # Fallback if rotation fails (e.g. file lock issue)
                 pass
 
@@ -323,7 +324,10 @@ def main():
     except Exception as e:
         print(f"[!] Warning: Could not initialize log file '{log_path}': {e}")
 
-    # Display initial version banner
+    # Display execution timestamp and version banner
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print("=" * 60)
+    print(f"Execution Date & Time: {now_str}")
     print(f"=== Modern Standby Registry Fixer v{VERSION} ===")
     print(f"[*] Logging output to: {log_path} (Max size: {MAX_LOG_SIZE_BYTES // 1024} KB)")
 
