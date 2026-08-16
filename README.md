@@ -1,4 +1,5 @@
-# Asus G713PV fix media powersettings - Workaround 
+# Asus G713PV - fix crash and freeze issues 
+## Workaround to BIOS ACPI bugs with Media device drivers
 
 > [!NOTE]
 >
@@ -33,10 +34,11 @@
 >
 > All following issues are fixed (see details below)
 >
-> - Flickers fixed
+> - Flickers fixed bu recent AMD GPU drivers and chpset
 > - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed.
-> - Black logon screen fixed, no random reboot anymore
-> - Enhance the Modern Standby experience to be closer to former S3 standby
+> - Black logon screen fixed
+> - No random reboot 
+> - Enhance Modern Standby experience sleep mode to be closer to former S3 standby
 > 
 > A tweak of Media drivers:
 > - NVidia HD Audio
