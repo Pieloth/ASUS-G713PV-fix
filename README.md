@@ -1,4 +1,4 @@
-# ASUS_G713PV_fix - Latest findings and Workaround 
+# Asus G713PV fix media powersettings - Workaround 
 
 > [!NOTE]
 >
