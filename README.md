@@ -20,7 +20,13 @@
 > ```
 > pyinstaller --onefile .\fix_media_powersettings
 > ```
-> A `/v` option can be used in command line to show a popup on execution. 
+> A `/v` option can be used in command line to show a popup on execution.
+>
+> Note also that a Task Scheduler file, fix_winlogon_crash.xml, is also provided\
+> This is useful in case of experience of a black logon screen (Image lost), and then nVidia icons lost after login in\
+> The reason comes from a winlogon.exe crash while in modern standby. Rare, but happens sometimes
+> Simply open Task Scheduler, and import the fix_winlogon_crash.xml file\
+> It will create another task, that detects such winlogon crash, and will restore the nVidia icons automatically
 
 > [!IMPORTANT]
 > **IMPORTANT INFORMATION FIRST**
