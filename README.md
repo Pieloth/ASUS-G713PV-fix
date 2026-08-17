@@ -52,7 +52,8 @@
 >
 > The Python script proposed in this repo executes this tweak easily.
 >
-> This script is to be executed at each boot (using Task Scheduler) because Realtek driver recreates the subkeys at each boot. Also, it will execute when a driver is updated.
+> This script is to be executed at each boot (using Task Scheduler) because Realtek driver recreates the subkeys at each boot.
+> Also, it will execute when a driver is updated.
 
 So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
 
