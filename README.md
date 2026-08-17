@@ -59,9 +59,7 @@ So called Random reboots, sound cracklings, Fast Flickers, all those are now wip
 
 Possibly works on other models from the same brand or product range too, like G733P models for instance
 
-Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by a Nvidia HD Audio driver tweak 
-
-See Below: **FIX HD AUDIO DRIVER**
+Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by Media Audio drivers tweak, consisting in removine the Powersettings subkey folder in Registry, due to BIOS ACPI malfunction 
 
 > [!NOTE]
 > DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
