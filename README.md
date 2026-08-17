@@ -6,7 +6,7 @@
 > TIP: Based on work for Asus G713PV laptop, but may be appropriate also for other models of the same Strix product line 
 > 
 > USAGE\
-> You can run the script in a console or from the File Explorer if just run once, it will ask for UAC privilege if non admin. \
+> Script .py can run in a console or .exe from the File Explorer, it will ask for UAC privilege if non admin. \
 > Note that a Task will be created in Task Scheduler\
 > Place the .exe in some folder, and run once the .exe . It will run automatically from this location at each reboot or when a driver is modified or updated.\
 > If the location of the file changes, the script will automatically update the scheduler task location\
