@@ -5,7 +5,7 @@
 >
 > TIP: Based on work for Asus G713PV laptop, but may be appropriate also for other models of the same Strix product line 
 > 
-> USAGE\
+> ***USAGE***\
 > Script .py can run in a console or .exe from the File Explorer, it will ask for UAC privilege if non admin. \
 > Note that a Task will be created in Task Scheduler\
 > Place the .exe in some folder, and run once the .exe . It will run automatically from this location at each reboot or when a driver is modified or updated.\
@@ -43,12 +43,10 @@
 > - No random reboot 
 > - Enhance Modern Standby experience sleep mode to be closer to former S3 standby
 > 
-> A tweak of Media drivers:
+> A Media drivers tweak is needed to achieve this: Remove PowerSettings key subfolder for these Media class drivers in Registry to disable customized powersettings values:
 > - NVidia HD Audio
 > - AMD Streaming
 > - Realtek HD Audio
->
-> is needed to achieve this: Remove the PowerSettings key subfolder of these drivers in Registry
 >
 > The Python script proposed in this repo executes this tweak easily.
 >
