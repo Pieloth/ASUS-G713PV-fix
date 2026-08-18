@@ -141,6 +141,20 @@ A `/v` option can be used in command line to show a popup on execution.
 
 The .exe version is to be used for normal usage to automatically scan and perform the needed actions. It creates automatically the scheduled task for System user, with all elevated rights.
 
+## UNINSTALLATION
+
+1. **DELETE TASK IN TASK SCHEDULER**\
+Open Windows Task Scheduler, and search for the task named: fix_media_powersettings\
+Right click on it and select: Delete
+
+2. **DELETE fix_media_powersettings.exe file**
+
+3. **DRIVERS**\
+To restore the deleted Powersettings keys in registry, simply reinstall, from the Device Manager (Audio, video and games section) or from the drivers packages:
+- nVidia HD Audio 
+- AMD Streaming 
+- Realtek Audio 
+
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
 Synthetic information relative to Modern Standby
