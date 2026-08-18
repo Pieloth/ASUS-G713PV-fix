@@ -96,21 +96,21 @@ There's a more recent version of this Firmware available here: [www.station-driv
 This latest version makes use of USB-C ports more stable than with Asus firmware version (outdated)
 
 2. **AMD Chipset and driver**\
-All latest, Adrenalin 26.6.4 with its associated chipset 8.05.04.516 works fine
+Latest AMD Adrenalin
 
 3. **nVidia GPU driver**\
-All latest, version 610.74 recent and works well.
+Latest versions.
 
 > [!IMPORTANT]
 > **WORKAROUND TO FIX HD AUDIO DRIVERS DUE TO BIOS ACPI bug**
 >
-> - NVIDIA HD Audio driver (currently 1.4.5.7)
+> - NVIDIA HD Audio driver
 > - AMD Streaming Audio driver
 > - Realtek HD Audio driver
 > 
 > all requires a Power settings tweak, otherwise, they might Freeze the PC when entering Modern Standby DRIPS
 >
-> These driver sets in Registry, a particular custom folder for energy savings: PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
+> These drivers set in Registry a particular folder for custom power saving: PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
 > 
 > They are created in this folder. Note `<XXXX>` is numbered by Windows:
 > ```
@@ -119,29 +119,27 @@ All latest, version 610.74 recent and works well.
 >
 > Probably due to BIOS (336) ACPI bug, this creates an instability with Windows
 >
-> The complete PowerSettings folder is to be removed, forcing default Windows settings. Safe, as this folder can be recreated each time the driver is installed.
+> The complete PowerSettings folder can be safely removed, forcing default Windows settings. This folder is recreated each time the driver is installed, and Realtek recreates it on boot
 >
 > The Python script available here simply locates and removes these PowerSettings folders automatically for the abovementionned Media drivers
 >
-> The script is to be run at each boot or when a driver is modified. A Task Scheduler task is set automatically as System user with privileges, as the Realtek driver recreates its keys at each reboot
+> The script will run at each boot or when a driver is modified. A Scheduler task is set automatically with System user privileges for running the .exe
 
-Execute script for test purpose in a Terminal: 
+For test purpose, the .py source can be run in a Terminal: 
 ```
 python fix_media_powersettings.py
 ```
-Or directly running the compiled .exe version to install it in some folder: 
+Or directly run the compiled .exe version to install it in some folder: 
 ```
 fix_media_powersettings.exe
 ```
-How to Compile the script to create .exe, in a simple terminal window:
+Command line to compile the script to create .exe, in a simple terminal window:
 ```
 pyinstaller --onefile .\fix_media_powersettings.py
 ```
 A `/v` option can be used in command line to show a popup on execution. 
 
-The .exe version is used in a scheduled task to automatically scan and perform the needed action on reboot. 
-
-It creates automatically the scheduled task for System user, with all elevated rights.
+The .exe version is to be used for normal usage to automatically scan and perform the needed actions. It creates automatically the scheduled task for System user, with all elevated rights.
 
 ## References
 1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
