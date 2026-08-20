@@ -39,7 +39,7 @@ This instability is triggered by `PowerSettings` subkeys created in the Windows 
 2. Right-click and **Run as Administrator** (or accept the UAC prompt).
 3. The script applies the fix immediately and configures the automated Task Scheduler entry.
 
-### Option 2: Python Script (`.py`)
+### Option 2: Python Script (`.py`) - For interactive test usage
 **Requirements:** Python 3.8+ and `pywin32`.
 
 ```bash
@@ -47,7 +47,8 @@ pip install pywin32
 python fix_media_powersettings.py /v
 ```
 
-> **Note:** The optional `/v` flag opens a native Windows summary popup upon execution.
+> [!NOTE]
+> The optional `/v` flag opens a native Windows summary popup upon execution.
 
 ---
 
@@ -66,3 +67,12 @@ The script inspects driver subkeys located under:
 ## ⚠️ Disclaimer
 
 This tool modifies specific driver power management registry keys to prevent hardware freezes. Tested and verified on Asus ROG hardware. Use at your own risk.
+
+---
+
+> [!NOTE]
+> A Task Scheduler file, fix_winlogon_crash.xml, is also proposed\
+> It helps if experiencing "black logon" screen (No background image), and nVidia icons lost just after login in\
+> The reason comes from winlogon.exe crash while in modern standby sleep.\
+> Rare, but happens sometimes\
+> In Task Scheduler, import the fix_winlogon_crash.xml file and create the new task. It will detect winlogon.exe crashes, and restore nVidia icons automatically
