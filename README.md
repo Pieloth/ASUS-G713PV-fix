@@ -1,168 +1,68 @@
-# Asus G713PV - fix crash and freeze issues 
-## Workaround to BIOS ACPI bugs with Media device drivers
+# Asus Modern Standby Audio Fix (`fix_media_powersettings`)
 
-> [!NOTE]
->
-> TIP: Based on work for Asus G713PV laptop, but may be appropriate also for other models of the same Strix product line 
-> 
-> ***USAGE***\
-> Script .py can run in a console or .exe from the File Explorer, it will ask for UAC privilege if non admin. \
-> Note that a Task will be created in Task Scheduler\
-> Place the .exe in some folder, and run once the .exe . It will run automatically from this location at each reboot or when a driver is modified or updated.\
-> If the location of the file changes, the script will automatically update the scheduler task location\
-> A Log file is updated at each run, it stands in same folder as the .exe or script
->
-> - To run for a test the source script in a terminal console: just execute script in a Terminal (if not admin, will ask for UAC privilege): 
-> ```
-> python fix_media_powersettings.py
-> ```
-> Or directly running the compiled .exe version, for installing the .exe in some folder: 
-> ```
-> fix_media_powersettings.exe
-> ```
-> - How to Compile the script to create .exe, in a simple terminal window:
-> ```
-> pyinstaller --onefile .\fix_media_powersettings
-> ```
-> A `/v` option can be used in command line to show a popup on execution.
->
-> Note also that a Task Scheduler file, fix_winlogon_crash.xml, is also provided\
-> This is useful in case of experience of a black logon screen (Image lost), and then nVidia icons lost after login in\
-> The reason comes from a winlogon.exe crash while in modern standby. Rare, but happens sometimes\
-> Simply open Task Scheduler, and import the fix_winlogon_crash.xml file\
-> It will create another task, that detects such winlogon crash, and will restore the nVidia icons automatically
+Automated background utility to fix Modern Standby (S0 Low Power Idle) system freezes and crashes on Asus laptops caused by audio driver power management subkeys.
 
-> [!IMPORTANT]
-> **IMPORTANT INFORMATION FIRST**
->
-> All following issues are fixed (see details below)
->
-> - Flickers fixed bu recent AMD GPU drivers and chpset
-> - Freeze on various Modern Standby combined situations with sleep or wake up, Fast Startup, Hibernation: All fixed.
-> - Black logon screen fixed
-> - No random reboot 
-> - Enhance Modern Standby experience sleep mode to be closer to former S3 standby
-> 
-> A Media drivers tweak is needed to achieve this: Remove PowerSettings key subfolder for these Media class drivers in Registry to disable customized powersettings values:
-> - NVidia HD Audio
-> - AMD Streaming
-> - Realtek HD Audio
->
-> The Python script proposed in this repo executes this tweak easily.
->
-> This script is executed at each boot (using Task Scheduler) because Realtek driver recreates the subkeys at each boot.\
-> Also, it will execute when a driver is updated.
+---
 
-So called Random reboots, sound cracklings, Fast Flickers, all those are now wipped and this laptop demonstrates good stability on load or on Modern Standby, which can now be fully enabled, along with Hibernate or Fast Startup.
+## 🚨 The Problem
 
-Possibly works on other models from the same brand or product range too, like G733P models for instance
+On several Asus laptops (such as the ROG Strix G713PV series and related models), an ACPI/BIOS implementation bug causes system freezes, black screens, or hard crashes during Modern Standby (S0) sleep transitions.
 
-Many issues combining Modern Standby with Hibernate or Fast Startup, are fixed by Media Audio drivers tweak, consisting in removine the Powersettings subkey folder in Registry, due to BIOS ACPI malfunction 
+This instability is triggered by `PowerSettings` subkeys created in the Windows Registry by high-definition audio drivers. Even if deleted manually, Windows or driver updates periodically restore these keys, causing sleep crashes to return.
 
-> [!NOTE]
-> DRIPS state is the lowest powered mode in Modern Standby, where the computer is really sleeping. See details in [References document 1](#References).
-> 
-> On Asus STRIX laptop, this state can be easily identified in AC mode, by the lights on the keyboard, showing a nice red effect:
-> 
-> ![ezgif-608d3a39ba95bd6d](https://github.com/user-attachments/assets/2d6b0e80-a177-456c-9006-9e70241569f4)
-> 
+## 💡 The Solution
 
-## Tweaking hibernate
-Hibernate mode is not enabled nor configured by default in Windows 11
+`fix_media_powersettings` is an autonomous, lightweight tool that:
+1. **Scans** `HKLM\SYSTEM\CurrentControlSet\Control\Class` for affected audio drivers.
+2. **Deletes** the problematic `PowerSettings` registry subkeys.
+3. **Registers a Windows Scheduled Task** (running under `SYSTEM`) to automatically maintain this clean state in the background without user intervention.
 
-You can enable Hibernate mode, using the Legacy Configuration panel / Power options / Power buttons
+---
 
-Or use the Wintoys application
+## ✨ Key Features
 
-To set the Hibernate timeout, use a simple terminal window and command line: 
+- **100% Autonomous:** Automatically cleans registry keys as soon as Windows or GPU/Audio installers recreate them.
+- **Smart Event-Driven Triggers:**
+  - **System Boot:** Ensures a clean state on startup.
+  - **Kernel-PnP (Event 410):** Triggers instantly when a driver INF file is bound or updated.
+  - **System Wake (Event 1):** Post-wake cleanup safeguard before the next standby transition.
+- **Idempotent & Fast:** Safe to run repeatedly. Checks complete in milliseconds with zero persistent RAM/CPU usage.
+- **Self-Elevating:** Automatically requests Administrator UAC elevation when launched manually.
+- **Self-Rotating Logs:** Keeps an execution history (`.log` / `.bak`) capped at 512 KB.
 
-1. For AC timeout: \
-   `powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE <Timeout AC value in seconds>`\
-   The Timeout value is to be set in seconds in this command line
-2. For DC timeout: \
-   `powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE <Timeout DC value in seconds>`\
-   The Timeout value is to be set in seconds in this command line
+---
 
-3. To read the current Hibernate timeout values: \
-   `powercfg /q SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE`\
-   Note that the timeouts values are displayed in Hexadecimal
+## 🚀 Quick Start
 
+### Option 1: Executable (`.exe`)
+1. Download the latest `fix_media_powersettings.exe` from the [Releases](../../releases) page.
+2. Right-click and **Run as Administrator** (or accept the UAC prompt).
+3. The script applies the fix immediately and configures the automated Task Scheduler entry.
 
-## Drivers and Firmware
-The default Windows 11 25H2 drivers, and Asus drivers are used, with the exception of the followings:
+### Option 2: Python Script (`.py`)
+**Requirements:** Python 3.8+ and `pywin32`.
 
-1. **ASMedia 4242 Firmware**\
-There's a more recent version of this Firmware available here: [www.station-drivers.com](https://www.station-drivers.com/index.php/fr/component/remository/Drivers/Asmedia/ASM-1x4x-2x4x-314x2-3242-4242--...--and--107x-2074-USB-3.x--and--USB-4.x-Controllers/Firmwares/ASM-4242-USB-4-Controller/Asmedia-ASM-4242-%28USB-4.0%29-Firmware-Version-1.02.22.00.00.11/lang,fr-fr/)\
-This latest version makes use of USB-C ports more stable than with Asus firmware version (outdated)
-
-2. **AMD Chipset and driver**\
-Latest AMD Adrenalin
-
-3. **nVidia GPU driver**\
-Latest versions.
-
-> [!IMPORTANT]
-> **WORKAROUND TO FIX HD AUDIO DRIVERS DUE TO BIOS ACPI bug**
->
-> - NVIDIA HD Audio driver
-> - AMD Streaming Audio driver
-> - Realtek HD Audio driver
-> 
-> all requires a Power settings tweak, otherwise, they might Freeze the PC when entering Modern Standby DRIPS
->
-> These drivers set in Registry a particular folder for custom power saving: PowerSettings, containing 3 keys for Performance, Conservation, and Idle level.
-> 
-> They are created in this folder. Note `<XXXX>` is numbered by Windows:
-> ```
-> HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\<XXXX>\PowerSettings
-> ```
->
-> Probably due to BIOS (336) ACPI bug, this creates an instability with Windows
->
-> The complete PowerSettings folder can be safely removed, forcing default Windows settings. This folder is recreated each time the driver is installed, and Realtek recreates it on boot
->
-> The Python script available here simply locates and removes these PowerSettings folders automatically for the abovementionned Media drivers
->
-> The script will run at each boot or when a driver is modified. A Scheduler task is set automatically with System user privileges for running the .exe
-
-For test purpose, the .py source can be run in a Terminal: 
+```bash
+pip install pywin32
+python fix_media_powersettings.py /v
 ```
-python fix_media_powersettings.py
-```
-Or directly run the compiled .exe version to install it in some folder: 
-```
-fix_media_powersettings.exe
-```
-Command line to compile the script to create .exe, in a simple terminal window:
-```
-pyinstaller --onefile .\fix_media_powersettings.py
-```
-A `/v` option can be used in command line to show a popup on execution. 
 
-The .exe version is to be used for normal usage to automatically scan and perform the needed actions. It creates automatically the scheduled task for System user, with all elevated rights.
+> **Note:** The optional `/v` flag opens a native Windows summary popup upon execution.
 
-## UNINSTALLATION
+---
 
-1. **DELETE TASK IN TASK SCHEDULER**\
-Open Windows Task Scheduler, and search for the task named: fix_media_powersettings\
-Right click on it and select: Delete
+## ⚙️ Target Drivers & Registry Paths
 
-2. **DELETE fix_media_powersettings.exe file**
+The script inspects driver subkeys located under:
+`HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\<DeviceID>\PowerSettings`
 
-3. **DRIVERS**\
-To restore the deleted Powersettings keys in registry, simply reinstall, from the Device Manager (Audio, video and games section) or from the drivers packages:
-- nVidia HD Audio 
-- AMD Streaming 
-- Realtek Audio 
+**Targeted Audio Drivers (Case-Insensitive):**
+- `nVidia High Definition Audio`
+- `AMD Streaming Audio Device`
+- `Realtek High Definition Audio`
 
-## References
-1. [White paper on Modern Standby from DELL](https://dl.dell.com/manuals/all-products/esuprt_solutions_int/esuprt_solutions_int_solutions_resources/client-mobile-solution-resources_white-papers45_en-us.pdf)
-Synthetic information relative to Modern Standby
-2. [Microsoft learn - PortCls Registry Power Settings](https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/portcls-registry-power-settings)
-Concerns Media devices Idle timeout settings
-3. [Microsoft learn - Device idle policy](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-device-idle-policy)
-Concerns Kernel device drivers Idle timeout management
-4. [Microsoft learn - Allow networking during standby](https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/no-subgroup-settings-allow-networking-during-standby)
-Concerns about Connectivity in standby, for Modern Standby. Deprecated, but turns out it is still in use.
-5. [Audio Device Class Inactivity Timer Implementation](https://learn.microsoft.com/en-us/windows-hardware/drivers/audio/audio-device-class-inactivity-timer-implementation)
-Explanations about PowerSettings (conservationidletime, idlepowerstate, performanceidletime) for driver devices
+---
+
+## ⚠️ Disclaimer
+
+This tool modifies specific driver power management registry keys to prevent hardware freezes. Tested and verified on Asus ROG hardware. Use at your own risk.
